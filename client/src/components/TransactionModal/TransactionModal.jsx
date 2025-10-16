@@ -14,7 +14,7 @@ import DropdownList from '../Dropdown/DropdownList';
 import useClickOutside from '../../hooks/useClickOutside';
 import Input from '../Input/Input';
 import DropdownInput from '../Dropdown/DropdownInput';
-import AddItemBtn from './addItemBtn';
+import AddItemBtn from './AddItemBtn';
 import { ModalContext } from '../../layouts/AppLayout/AppLayout';
 import CloseButton from '../CloseButton/CloseButton';
 import SubmitButton from '../SubmitButton/SubmitButton';
