@@ -1,7 +1,7 @@
 import styles from './DropdownInput.module.scss';
 import Input from '../Input/Input';
 import DropdownList from './DropdownList';
-import AddItemBtn from '../TransactionModal/addItemBtn';
+import AddItemBtn from '../TransactionModal/AddItemBtn';
 import useClickOutside from '../../hooks/useClickOutside';
 import { useState, useRef, useEffect } from 'react';
 import { use } from 'react';
