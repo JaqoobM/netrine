@@ -1,0 +1,62 @@
+.navMobile {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	box-shadow: 0px 5px 10px 0px rgb(128, 128, 128);
+	background-color: #fff;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 5.5rem;
+	z-index: 1000;
+}
+
+.circle {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: absolute;
+	background-color: #007894;
+	height: 5.5rem;
+	width: 5.5rem;
+	bottom: 0;
+	border-radius: 50%;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.plusIcon {
+	color: #fff;
+	font-size: 2.3rem;
+}
+
+.navBoxes {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	color: #959595;
+}
+
+.navTexts {
+	font-size: 1.1rem;
+}
+
+.navIcons {
+	font-size: 2.2rem;
+}
+
+.transactionsBox {
+	margin-right: 4rem;
+}
+
+.shoppingBox {
+	margin-left: 4rem;
+}
+
+.iconActivated {
+	color: #219ebc;
+}

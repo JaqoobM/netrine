@@ -1,0 +1,85 @@
+.dropdownList {
+	position: absolute;
+	top: 6.5rem;
+	top: 4rem;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border: 0.1rem solid #68c2d8;
+	border: 0.1rem solid #219ebc;
+	border-top: none;
+	border-bottom-left-radius: 0.8rem;
+	border-bottom-right-radius: 0.8rem;
+	z-index: 1000;
+	box-shadow: 0px 5px 5px 0px rgb(216, 216, 216);
+	background-color: #e9f5f8;
+	max-height: 16.1rem;
+	overflow-y: auto;
+	overflow-x: hidden;
+	overscroll-behavior: none;
+	scroll-behavior: smooth;
+	transform-origin: top;
+	transform: scaleY(0);
+	opacity: 0;
+	visibility: hidden;
+	transition: transform 0.2s, opacity 0.2s, visibility 0s 0.2s;
+}
+
+.isActive {
+	visibility: visible;
+	opacity: 1;
+	transform: scaleY(1);
+	transition: transform 0.2s, opacity 0.2s, visibility 0s;
+}
+
+.dorpdownListElement {
+	position: relative;
+	overflow-wrap: break-word;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	cursor: pointer;
+	padding: 0.8rem 1.1rem 0.8rem;
+	color: #002e38;
+
+	&:hover {
+		background-color: #d5edf5;
+	}
+}
+
+.emptyList {
+	text-align: center;
+}
+
+.highlight {
+	background-color: #d5edf5;
+}
+
+.line {
+	position: absolute;
+	bottom: 0;
+	top: 0;
+	left: 1.1rem;
+	right: 1.1rem;
+	border-bottom: 0.1rem solid #a7d3df;
+}
+
+.balanceAmountText {
+	color: #6fad24;
+}
+
+.balanceText {
+	color: rgb(33, 158, 188);
+}
+
+.colorBox {
+	width: 100%;
+	height: 100%;
+	background-color: red;
+	border-radius: 0.4rem;
+}
+
+.colorsHeight {
+	height: 4rem;
+}

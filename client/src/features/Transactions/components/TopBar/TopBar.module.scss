@@ -1,0 +1,157 @@
+// @use '../../../../assets/styles/colors';
+
+.container {
+	position: fixed;
+	top: 0;
+	width: 100%;
+	box-shadow: 0px -5px 10px 0px rgb(128, 128, 128);
+}
+
+.topBox {
+	background-color: #fff;
+}
+
+.inputBox {
+	font-size: 1.4rem;
+	margin-right: 6.5rem;
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+	display: flex;
+	align-items: center;
+}
+
+.dataBox {
+	display: flex;
+	justify-content: center;
+	font-size: 1.6rem;
+	width: 100%;
+	display: flex;
+	padding-bottom: 1rem;
+	border-bottom: 0.1rem solid #c9e7ee;
+}
+
+.currency {
+	display: flex;
+	align-items: center;
+	color: #8899a6;
+	margin-right: 0.1rem;
+}
+
+.statsBox {
+	display: flex;
+}
+
+.statBox {
+	margin-right: 1.5rem;
+	display: flex;
+
+	&:last-child {
+		margin-right: 0;
+	}
+}
+
+.search {
+	font-size: 1.4rem;
+	padding: 0.8rem;
+	width: 100%;
+	margin-left: 1.4rem;
+	border-radius: 1.2rem;
+	border: none;
+	background-color: #f3f3f3;
+	outline: 0.1rem solid #dbe5e7;
+
+	&:hover {
+		outline: 0.1rem solid #219ebc;
+		background-color: #219dbc15;
+	}
+}
+
+.logo {
+	margin-left: 1.4rem;
+	height: 3rem;
+}
+
+.icons {
+	margin-right: 0.6rem;
+}
+
+.icon1 {
+	color: #00bb13;
+}
+
+.icon2 {
+	color: #ff1f1f;
+}
+
+.icon3 {
+	color: #6fad24;
+	transform: rotateY(180deg);
+}
+
+.bottomBox {
+	background-color: #fff;
+}
+
+.bottomContainer {
+	font-size: 1.6rem;
+	display: flex;
+	align-items: center;
+	padding: 0.7rem 0 0.7rem;
+}
+
+.checkboxText {
+	margin-left: 0.6rem;
+	color: #8899a6;
+}
+
+.rightBox {
+	margin-right: 1.4rem;
+	margin-left: auto;
+	display: flex;
+}
+
+.sortBox {
+	font-size: 1.6rem;
+	margin-right: 2.5rem;
+	display: flex;
+	align-items: center;
+	padding: 0.5rem;
+	border: none;
+	border-radius: 0.4rem;
+	background: none;
+	color: #219ebc;
+}
+
+.sortIcon {
+	transform: rotate(90deg);
+	margin-right: 0.6rem;
+}
+
+.filterBox {
+	font-size: 1.6rem;
+	display: flex;
+	align-items: center;
+	background-color: #219ebc;
+	border: none;
+	color: #fff;
+	padding: 0.5rem;
+	border-radius: 0.4rem;
+}
+
+.filterIcon {
+	margin-right: 0.4rem;
+}
+
+.bilans {
+	color: #6fad24;
+}
+
+@media (min-width: 365px) {
+	// .dataBox {
+	// 	font-size: 1.6rem;
+	// }
+
+	// .icons {
+	// 	margin-right: 0.5rem;
+	// }
+}

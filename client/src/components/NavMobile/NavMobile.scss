@@ -1,0 +1,175 @@
+@use '../../assets/styles/colors';
+
+// NAVIGATION
+.nav {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width: 19.2rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	transform: translateX(0);
+	box-shadow: 0.2rem 0 0.4rem rgba(0, 0, 0, 0.25);
+	display: none;
+	transition: width 0.1s;
+
+	&__menu-link {
+		font-size: 1.6rem;
+		text-decoration: none;
+		margin-bottom: 1rem;
+		color: colors.$granite;
+		padding: 1.5rem 2.8rem 1.5rem;
+
+		&:nth-child(6) {
+			margin-bottom: 7rem;
+		}
+
+		&:hover {
+			background-color: colors.$light-blue;
+			color: colors.$blue;
+		}
+	}
+
+	&__menu-icon {
+		font-size: 2rem;
+		margin-right: 1.5rem;
+	}
+
+	&__menu-text {
+		transition: opacity 0.1s;
+	}
+
+	&__transaction-icon {
+		margin-right: 0.8rem;
+	}
+
+	&__menu-settings-box {
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+.nav-texts-disabled {
+	display: none;
+}
+
+.nav-icons-margin-off {
+	margin-right: 0;
+}
+
+.nav-small {
+	width: 8.1rem;
+}
+// NAV MOBILE
+.nav-mobile-app {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	height: 5.5rem;
+	display: grid;
+	grid: repeat(6, 1fr); 
+	box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+	background-color: #ffffff;
+
+	&__box {
+		color: colors.$granite;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		background: none;
+		border: none;
+	}
+
+	&__box1 {
+		grid-column: 1/2;
+	}
+
+	&__box2 {
+		grid-column: 2/3;
+	}
+
+	&__box3 {
+		grid-column: 3/4;
+	}
+
+	&__box4 {
+		grid-column: 4/5;
+	}
+
+	&__box5 {
+		grid-column: 5/6;
+	}
+
+	&__icon {
+		font-size: 2.5rem;
+	}
+
+	&__text {
+		color: colors.$granite-nav-icons;
+		margin-top: 0.3rem;
+		font-size: 1rem;
+	}
+}
+
+// BURGER MENU
+.burger-btn {
+	position: fixed;
+	top: 1rem;
+	left: 1rem;
+	background: none;
+	border: none;
+	width: 6rem;
+	height: 5rem;
+	z-index: 10000;
+	display: none;
+	padding: 1.6rem;
+	transition: background-color 0.1s, border-radius 0.1s;
+	cursor: pointer;
+
+	&:hover {
+		border-radius: 50%;
+		background-color: colors.$light-blue;
+	}
+
+	&__box {
+		height: 100%;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		transition: transform 0.1s;
+	}
+
+	&__bar {
+		border-radius: 1rem;
+		border: 0.1rem solid colors.$blue;
+	}
+}
+
+.burger-rotate {
+	transform: rotate(90deg);
+}
+
+// @media (max-width: 991px) {
+// }
+
+@media (min-width: 992px) {
+	.nav {
+		display: flex;
+	}
+	.nav-mobile-app {
+		display: none;
+	}
+
+	.burger-btn {
+		display: block;
+	}
+}

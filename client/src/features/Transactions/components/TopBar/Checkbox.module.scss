@@ -1,0 +1,40 @@
+.checkbox {
+	position: relative;
+	display: flex;
+	align-items: center;
+	width: 4.9rem;
+	height: 2.8rem;
+	background-color: #fff;
+	border: 0.1rem solid #9bd4e4;
+	border-radius: 1.5rem;
+	margin-left: 1.4rem;
+	background-color: #fff;
+	transition: background-color 0.2s;
+}
+
+.checkboxActive {
+	background-color: #c9e7ee;
+}
+
+.circle {
+	position: absolute;
+	width: 2.1rem;
+	height: 2.1rem;
+	border-radius: 50%;
+	background-color: #9bd4e4;
+	left: 0.3rem;
+	transition: transform 0.2s;
+}
+
+.circleActive {
+	background-color: #219ebc;
+	transform: translateX(100%);
+}
+
+.xIcon {
+	position: absolute;
+	top: 0.2rem;
+	left: 0.6rem;
+	font-size: 1.2rem;
+	color: #fff;
+}

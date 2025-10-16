@@ -1,0 +1,285 @@
+@use '../../../assets/styles/colors';
+
+// TOP BAR
+.top-bar-app {
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+	background-color: colors.$white;
+	box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+
+	&__top-bar {
+		display: flex;
+		align-items: center;
+		height: 5rem;
+	}
+
+	&__input-box {
+		width: 100%;
+		position: relative;
+		margin-right: 6.5rem;
+	}
+
+	&__input {
+		padding: 1rem 3rem 1rem 1rem;
+		font-size: 1.2rem;
+		height: 3rem;
+		width: 100%;
+		outline: 0.1rem solid colors.$granite-nav-icons;
+		border: none;
+		border-radius: 1rem;
+		color: colors.$black;
+
+		&:focus {
+			outline: 0.1rem solid colors.$blue;
+		}
+	}
+
+	&__input-icon {
+		position: absolute;
+		right: 1rem;
+		top: 50%;
+		transform: translateY(-50%);
+		color: colors.$granite;
+	}
+
+	&__settings-menu-btn {
+		position: relative;
+		margin-right: 1rem;
+		margin-left: 1rem;
+		padding: 0.8rem;
+		font-size: 2rem;
+		background: none;
+		border: none;
+		color: colors.$black;
+	}
+
+	&__settings-btn {
+		padding: 1.6rem;
+		width: 100%;
+		height: 50%;
+		border: none;
+		background: none;
+	}
+
+	&__settings-box {
+		position: absolute;
+		top: 3rem;
+		left: 0.3rem;
+		width: 14rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-evenly;
+		background-color: colors.$white;
+		border: 0.1rem solid colors.$granite-light;
+		z-index: 10000;
+		visibility: hidden;
+		border-radius: 1rem;
+	}
+
+	&__settings-line {
+		border: 0.1rem solid colors.$granite-light;
+	}
+
+	&__settings-text {
+		font-size: 1.3rem;
+	}
+
+	&__settings-icon {
+		font-size: 1.3rem;
+		margin-right: 0.5rem;
+		color: colors.$granite;
+	}
+
+	&__burger-btn {
+		position: fixed;
+		right: 0;
+		top: 0.6rem;
+		margin-left: 1rem;
+		margin-right: 1rem;
+		padding: 0.8rem;
+		width: 4.5rem;
+		height: 3.8rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		background: none;
+		border: none;
+		color: colors.$black;
+		z-index: 10000;
+	}
+
+	&__burger-bar {
+		width: 100%;
+		border: 0.2rem solid colors.$blue;
+		border-radius: 1rem;
+		transition: transform 0.2s, opacity 0.2s;
+	}
+
+	&__burger-bar1 {
+		transform-origin: top left;
+	}
+
+	&__burger-bar3 {
+		transform-origin: bottom left;
+	}
+
+	&__bottom-bar {
+		font-size: 1.4rem;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 1.2rem 0;
+		height: 3rem;
+		background-color: colors.$white;
+		box-shadow: 0px 12px 10px -16px rgb(117, 117, 117);
+	}
+
+	&__cost-income-box {
+		display: flex;
+		align-items: center;
+	}
+
+	&__bottom-bar-icon {
+		font-size: 1.5rem;
+		margin-right: 0.3rem;
+	}
+
+	&__income-icon {
+		color: colors.$green;
+	}
+
+	&__cost-icon {
+		color: colors.$red;
+		margin-left: 1.4rem;
+		transform: rotate(90deg);
+	}
+
+	&__income {
+		color: colors.$green;
+	}
+
+	&__cost {
+		color: colors.$red;
+	}
+
+	&__balance-box {
+		display: flex;
+		align-items: center;
+		border: 0.1rem solid colors.$green;
+		border-radius: 0.5rem;
+		padding: 0.2rem 0.3rem 0.2rem;
+	}
+
+	&__balance {
+		color: colors.$green;
+	}
+
+	&__balance-icon {
+		font-size: 0.9rem;
+		margin-right: 0.2rem;
+		color: colors.$green;
+	}
+
+	&__balance-currency {
+		color: rgba(0, 187, 19, 0.5);
+	}
+
+	&__currency {
+		font-size: 1rem;
+		margin-left: 0.1rem;
+	}
+
+	&__cost-currency {
+		color: rgba(255, 31, 31, 0.5);
+	}
+
+	&__income-currency {
+		color: rgba(0, 187, 19, 0.5);
+	}
+}
+
+.settings-open {
+	visibility: visible;
+}
+
+.filter-bar1-x {
+	transform: rotate(41deg);
+}
+
+.filter-bar2-x {
+	opacity: 0;
+}
+
+.filter-bar3-x {
+	transform: rotate(-40deg);
+}
+
+// BOTTOM BUTTONS
+.transaction-btns {
+	position: fixed;
+	right: 0;
+	left: 0;
+	bottom: 7rem;
+	display: flex;
+	justify-content: space-evenly;
+
+	&__btn {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 1.2rem 3rem 1rem;
+		border: none;
+		background: none;
+		border-radius: 5rem;
+		color: colors.$white;
+	}
+
+	&__plan-btn {
+		background-color: colors.$orange;
+	}
+
+	&__add-btn {
+		background-color: colors.$blue;
+	}
+
+	&__text-box {
+		display: flex;
+		flex-direction: column;
+		margin-right: 1rem;
+	}
+
+	&__text {
+		font-size: 1.1rem;
+	}
+
+	&__icon {
+		font-size: 2rem;
+	}
+}
+
+// BACKGROUND
+.page-bg {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: colors.$bg-transactions-blue;
+	z-index: -2;
+}
+
+@media (min-width: 992px) {
+	.top-bar-app {
+		display: none;
+
+		&__burger-btn {
+			display: none;
+		}
+	}
+
+	.transaction-btns {
+		display: none;
+	}
+}

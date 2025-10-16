@@ -1,0 +1,16 @@
+.submitBtn {
+	// margin-top: 2.5rem;
+	height: 4.8rem;
+	width: 100%;
+	border-radius: 2.5rem;
+	border-radius: 0.8rem;
+	border: 0.1rem solid transparent;
+	background-color: #fb8500;
+	transition: 0.2s;
+	color: #fff;
+	cursor: pointer;
+
+	&:hover {
+		box-shadow: 0px 0px 9px -3px #fb8500;
+	}
+}

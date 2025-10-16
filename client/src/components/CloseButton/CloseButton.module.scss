@@ -1,0 +1,46 @@
+.closeBtn {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	top: 1.2rem;
+	padding: 1.5rem;
+	right: 1.2rem;
+	font-size: 2rem;
+	cursor: pointer;
+	width: 2rem;
+	height: 2rem;
+	border-radius: 50%;
+	transition: background-color 0.1s;
+
+	&:hover {
+		background-color: rgba(0, 0, 0, 0.068);
+	}
+
+	&:hover .closeBtnBar1 {
+		transform: translateX(-50%) rotate(45deg) scale(0.9);
+	}
+
+	&:hover .closeBtnBar2 {
+		transform: translateX(-50%) rotate(-45deg) scale(0.9);
+	}
+}
+
+.closeBtnIcon {
+	border: 0.1rem solid #323232;
+	position: absolute;
+	left: 50%;
+	width: 2rem;
+	height: 0.1rem;
+	border-radius: 1rem;
+	background-color: #323232;
+	transition: transform 0.1s;
+}
+
+.closeBtnBar1 {
+	transform: translateX(-50%) rotate(45deg);
+}
+
+.closeBtnBar2 {
+	transform: translateX(-50%) rotate(-45deg);
+}

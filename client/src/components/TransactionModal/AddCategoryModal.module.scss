@@ -1,0 +1,41 @@
+.wrapper {
+	position: relative;
+	height: 61.7rem;
+	width: 100%;
+	overflow: hidden;
+	margin-top: auto;
+}
+
+.modalContainer {
+	position: absolute;
+	background-color: #fff;
+	margin-top: auto;
+	z-index: 1000000;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	padding: 2.5rem;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(100%);
+	transition: transform 0.3s, opacity 0.3s, visibility 0s 0.3s;
+}
+
+.modalIsOpen {
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0);
+	transition: transform 0.3s, opacity 0.3s, visibility 0s;
+	color: #ffffff80;
+	color: #ce171780;
+}
+
+@media (min-width: 768px) {
+	.wrapper {
+		margin-top: 0;
+		width: 43rem;
+		height: 61.7rem;
+		border-radius: 1.5rem;
+	}
+}
