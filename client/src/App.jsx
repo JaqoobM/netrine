@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router';
 import Transactions from './features/Transactions/pages/Transactions';
 import SignUpPage from './features/Auth/pages/SignUpPage';
 import SignInPage from './features/Auth/pages/SignInPage';
-import AppLayout from './layouts/AppLayout/Applayout';
+import AppLayout from './layouts/AppLayout/AppLayout';
 
 function App() {
 	return (
