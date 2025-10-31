@@ -6,7 +6,7 @@ import React from 'react';
 // import AddTransactionModal from '../../../components/TransactionModal/TransactionModal.jsx';
 // import CategoryModal from '../../../components/Categories/Categories.jsx';
 import Navigation from '../../../components/NavMobile/NavMobile.jsx';
-import TransactionsList from './TransactionsList.jsx';
+import TransactionsList from './TransactionsList';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import {
