@@ -61,6 +61,8 @@ function Transactions() {
 		fetchTransactions();
 	}, []);
 
+	console.log('TransactionsPage');
+
 	// useEffect(() => {
 	// 	const fetchHistoricalWeather = async () => {
 	// 		const url = 'https://api.open-meteo.com/v1/forecast';
