@@ -4,9 +4,9 @@ import React, { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
 
-export default function TransactionsList(props) {
+export default function TransactionsList({ transactionsList }) {
 
-	const transactions = props.transactions;
+	const transactions = transactionsList;
 
 	return (
 		<div className='transactions'>

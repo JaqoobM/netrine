@@ -38,7 +38,7 @@ function Transactions() {
 		const fetchTransactions = async () => {
 			try {
 				const transactions = await axios.get(
-					`${baseURL || 'http://localhost:5173'}/api/transactions`
+					`${baseURL || 'http://localhost:3000'}/api/transactions`
 				);
 
 				const transactionData = transactions.data.map((transaction) => {
@@ -51,7 +51,7 @@ function Transactions() {
 					};
 					return newTransaction;
 				});
-
+				console.log(transactionData);
 				setTransactions(transactionData);
 			} catch (e) {
 				console.log(e, 'Nie udało się pobrać');
@@ -285,7 +285,7 @@ function Transactions() {
 			<TopBar />
 
 			{/* BOTTOM BUTTONS */}
-			<div className='transaction-btns'>
+			{/* <div className='transaction-btns'>
 				<button
 					className='transaction-btns__btn transaction-btns__plan-btn'
 					type='button'>
@@ -311,13 +311,13 @@ function Transactions() {
 						<FontAwesomeIcon icon={faPlus} />
 					</span>
 				</button>
-			</div>
+			</div> */}
 			{/* <FiltersMobile /> */}
 
 			{/* TRANSACTIONS */}
 			<TransactionsList
 				editTransactionHandler={editTransactionHandler}
-				transactions={transactions}
+				transactionsList={transactions}
 				modalHandler={modalHandler}
 			/>
 			<div className='page-bg'></div>

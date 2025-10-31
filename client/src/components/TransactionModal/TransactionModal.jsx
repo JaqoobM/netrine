@@ -183,11 +183,15 @@ export default function AddTransactionModal({ isModalOpen }) {
 						/>
 
 						{/* BUTTON WALLETS */}
-						<DropdownBtn title={'Wallets'} items={allWallets} />
+						<DropdownBtn
+							title={'Wallets'}
+							items={allWallets}
+							btnType={'categories'}
+						/>
 
 						{/* BUTTON CATEGORY */}
 						<div className={styles.inputContainer}>
-							<DropdownBtn title={'Category'} />
+							<DropdownBtn title={'Category'} btnType={'categories'} />
 							<AddItemBtn handleOpen={handleAddCategoryModalToggle} />
 						</div>
 

@@ -67,7 +67,7 @@ export default function AddCategoryModal({
 
 	return (
 		<div className={styles.wrapper}>
-			<div className={`${styles.modalContainer} ${true && styles.modalIsOpen}`}>
+			<div className={`${styles.modalContainer} ${isOpen && styles.modalIsOpen}`}>
 				<CloseButton value={use(CloseContext)} handleClear={handleClear} />
 				<form onSubmit={handleSubmit}>
 					<Header2 value={'Create a new category'} />
