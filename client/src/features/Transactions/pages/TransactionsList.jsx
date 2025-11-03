@@ -1,15 +1,14 @@
-import './TransactionsList.scss';
+import styles from './TransactionsList.module.scss';
 // import React from 'react';
 import React, { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
 
 export default function TransactionsList({ transactionsList }) {
-
 	const transactions = transactionsList;
 
 	return (
-		<div className='transactions'>
+		<div className={styles.transactions}>
 			{transactions.map((transaction) => {
 				let isDifferent;
 				let isFirst;
@@ -44,9 +43,39 @@ export default function TransactionsList({ transactionsList }) {
 					<React.Fragment key={transaction._id || transaction.customId}>
 						{transaction === transactions[0] || isDifferent ? (
 							<>
-								<span className='transactions__date'>
-									{transaction.date.split('-').reverse().join('.')}
-								</span>
+								<div className={styles.topBar}>
+									<span className={styles.date}>
+										{transaction.date.split('-').reverse().join('.')}
+									</span>
+
+									<div className={`${styles.incomeBox} ${styles.amountBoxes}`}>
+
+										<span
+											className={`${styles.incomeIcon} ${styles.amountIcons}`}>
+											<FontAwesomeIcon icon='fa-solid fa-caret-up' />
+										</span>
+
+										<span
+											className={`${styles.incomeText} ${styles.amountTexts}`}>
+											1800
+										</span>
+
+									</div>
+
+									<div className={`${styles.costBox} ${styles.amountBox}`}>
+
+										<span
+											className={`${styles.costIcon} ${styles.amountIcons}`}>
+											<FontAwesomeIcon icon='fa-solid fa-caret-down' />
+										</span>
+
+										<span
+											className={`${styles.costText} ${styles.amountTexts}`}>
+											800
+										</span>
+										
+									</div>
+								</div>
 
 								<div
 									onClick={() => {
@@ -56,22 +85,20 @@ export default function TransactionsList({ transactionsList }) {
 											transaction.customId
 										);
 									}}
-									className={`transactions__transaction ${
-										isFirst ? 'transaction-first-border' : ''
+									className={`${styles.transaction} ${
+										isFirst ? styles.transactionFirstBorder : ''
 									}`}>
-									<span className='transactions__icon-bg'>
-										<span className='transactions__icon'>
+									<span className={styles.iconBg}>
+										<span className={styles.icon}>
 											<FontAwesomeIcon icon={faCartShopping} />
 										</span>
 									</span>
 
-									<div className='transactions__title-container'>
-										<span className='transactions__title'>
-											{transaction.name}
-										</span>
-										<span className='transactions__price'>
+									<div className={styles.titleContainer}>
+										<span className={styles.title}>{transaction.name}</span>
+										<span className={styles.price}>
 											{transaction.amount}
-											<span className='transactions__price-ending'>zł</span>
+											<span className={styles.priceEnding}>zł</span>
 										</span>
 									</div>
 								</div>
@@ -85,22 +112,20 @@ export default function TransactionsList({ transactionsList }) {
 										transaction.customId
 									);
 								}}
-								className={`transactions__transaction ${
-									isBetween ? 'transaction-between-border' : ''
-								} ${isLast ? 'transaction-last-border' : ''}`}>
-								<span className='transactions__icon-bg'>
-									<span className='transactions__icon'>
+								className={`${styles.transaction} ${
+									isBetween ? styles.transactionBetweenBorder : ''
+								} ${isLast ? styles.transactionLastBorder : ''}`}>
+								<span className={styles.iconBg}>
+									<span className={styles.icon}>
 										<FontAwesomeIcon icon={faCartShopping} />
 									</span>
 								</span>
 
-								<div className='transactions__title-container'>
-									<span className='transactions__title'>
-										{transaction.name}
-									</span>
-									<span className='transactions__price'>
+								<div className={styles.titleContainer}>
+									<span className={styles.title}>{transaction.name}</span>
+									<span className={styles.price}>
 										{transaction.amount}
-										<span className='transactions__price-ending'>zł</span>
+										<span className={styles.priceEnding}>zł</span>
 									</span>
 								</div>
 							</div>
