@@ -18,6 +18,7 @@
 	margin-bottom: 0.5rem;
 	display: flex;
 	font-size: 1.4rem;
+	padding: 1rem;
 }
 
 .amountBoxes {
@@ -34,11 +35,11 @@
 }
 
 .incomeBox {
-	margin-right: 3rem;
+	margin-right: 5rem;
 }
 
 .costBox {
-	margin-right: 1rem;
+	// margin-right: 1rem;
 }
 
 .costIcon {
@@ -50,7 +51,7 @@
 }
 
 .date {
-	margin-left: 1rem;
+	// margin-left: 1rem;
 	color: colors.$blue;
 }
 
