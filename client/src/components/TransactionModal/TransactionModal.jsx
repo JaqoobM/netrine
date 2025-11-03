@@ -21,11 +21,13 @@ import SubmitButton from '../SubmitButton/SubmitButton';
 import AddNameModal from './AddNameModal.jsx';
 import Header2 from '../Header2/Header2';
 import AddCategoryModal from './AddCategoryModal.jsx';
+import axios from 'axios';
 
 export const CloseContext = createContext(null);
 export const NameContext = createContext(null);
 
 export default function AddTransactionModal({ isModalOpen }) {
+	const baseURL = import.meta.env.VITE_API_URL;
 	const numbersArr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 	const date = new Date();
 	const year = date.getFullYear();
@@ -114,6 +116,51 @@ export default function AddTransactionModal({ isModalOpen }) {
 		setIsAddCategoryModalOpen(false);
 	};
 
+	const addTransactionData = async (newTransaction) => {
+		try {
+			await axios.post(
+				`${baseURL || 'http://localhost:3000'}/api/transactions`,
+				{
+					name: newTransaction.name,
+					amount: newTransaction.amount,
+					date: newTransaction.date,
+					type: newTransaction.type,
+				}
+			);
+
+			// const newTransactions = [...transactions];
+			// newTransactions.push(newTransaction);
+
+			// sortTransactionsHandler(newTransactions, 'newest');
+		} catch (e) {
+			console.log('Nie udało się wysłać na serwer!', e);
+		}
+	};
+
+	const dateRef = useRef();
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+
+		let type;
+
+		if (isSwitched === false) {
+			type = 'cost';
+		} else {
+			type = 'income';
+		}
+
+		const newTransaction = {
+			name: inputValue,
+			amount: amountInputValue,
+			date: dateRef.current.value,
+			type,
+		};
+
+		console.log(newTransaction);
+		addTransactionData(newTransaction);
+	};
+
 	return (
 		<CloseContext value={handleClose}>
 			<div
@@ -136,7 +183,7 @@ export default function AddTransactionModal({ isModalOpen }) {
 						isModalOpen && styles.modalOpen
 					}`}>
 					<CloseButton value={use(ModalContext)} />
-					<form className={styles.form}>
+					<form onSubmit={handleSubmit} className={styles.form}>
 						<Header2 value={'Create new transaction'} />
 
 						<div className={styles.switchContainer}>
@@ -180,6 +227,12 @@ export default function AddTransactionModal({ isModalOpen }) {
 							inputValue={amountInputValue}
 							onChange={handleAmountInputValueChange}
 							idValue={'amount'}
+						/>
+
+						<input
+							ref={dateRef}
+							type='date'
+							style={{ marginBottom: '2.5rem' }}
 						/>
 
 						{/* BUTTON WALLETS */}

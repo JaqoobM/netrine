@@ -14,6 +14,9 @@ const transactionSchema = new Schema({
 	customId: {
 		type: String,
 	},
+	type: {
+		type: String,
+	},
 });
 
 const Transaction = mongoose.model('Transaction', transactionSchema);

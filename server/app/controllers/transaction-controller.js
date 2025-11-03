@@ -8,6 +8,7 @@ class TransactionControler {
 			amount: req.body.amount,
 			date: req.body.date,
 			customId: req.body.customId,
+			type: req.body.type,
 		});
 
 		try {
@@ -19,7 +20,7 @@ class TransactionControler {
 	}
 
 	async showTransactions(req, res) {
-		const transactions = await Transaction.find({}).sort({date: -1});
+		const transactions = await Transaction.find({}).sort({ date: -1 });
 		res.json(transactions);
 	}
 
