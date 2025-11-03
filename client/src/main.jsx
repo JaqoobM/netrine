@@ -2,20 +2,22 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './main.scss';
 import App from './App';
-import { BrowserRouter } from 'react-router';
+import { BrowserRouter, Routes, Route } from 'react-router';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 
-console.log("React app initialized");
-library.add(fas)
+console.log('React app initialized');
+library.add(fas);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	// <React.StrictMode>
-		<BrowserRouter>
-			<App />
-		</BrowserRouter>
+	<BrowserRouter>
+		<Routes>
+			<Route path='*' element={<App />} />
+		</Routes>
+	</BrowserRouter>
 	// </React.StrictMode>
 );
 
