@@ -11,22 +11,29 @@
 }
 
 .topBar {
+	background-color: #c9e7ee;
+	border-radius: 0.6rem;
 	margin-top: 2rem;
+	margin-bottom: 0.5rem;
 	display: flex;
 	font-size: 1.4rem;
 }
 
 .amountBoxes {
+	color: #5d5d5d;
+}
+
+.amountContainer {
 	margin-left: auto;
+	display: flex;
 }
 
 .amountIcons {
 	margin-right: 0.5rem;
-	display: inline-block;
 }
 
 .incomeBox {
-	margin-right: 2rem;
+	margin-right: 3rem;
 }
 
 .costBox {

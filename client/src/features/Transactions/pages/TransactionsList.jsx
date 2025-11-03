@@ -48,32 +48,31 @@ export default function TransactionsList({ transactionsList }) {
 										{transaction.date.split('-').reverse().join('.')}
 									</span>
 
-									<div className={`${styles.incomeBox} ${styles.amountBoxes}`}>
+									<div className={styles.amountContainer}>
+										<div
+											className={`${styles.incomeBox} ${styles.amountBoxes}`}>
+											<span
+												className={`${styles.incomeIcon} ${styles.amountIcons}`}>
+												<FontAwesomeIcon icon='fa-solid fa-caret-up' />
+											</span>
 
-										<span
-											className={`${styles.incomeIcon} ${styles.amountIcons}`}>
-											<FontAwesomeIcon icon='fa-solid fa-caret-up' />
-										</span>
+											<span
+												className={`${styles.incomeText} ${styles.amountTexts}`}>
+												1800
+											</span>
+										</div>
 
-										<span
-											className={`${styles.incomeText} ${styles.amountTexts}`}>
-											1800
-										</span>
+										<div className={`${styles.costBox} ${styles.amountBoxes}`}>
+											<span
+												className={`${styles.costIcon} ${styles.amountIcons}`}>
+												<FontAwesomeIcon icon='fa-solid fa-caret-down' />
+											</span>
 
-									</div>
-
-									<div className={`${styles.costBox} ${styles.amountBox}`}>
-
-										<span
-											className={`${styles.costIcon} ${styles.amountIcons}`}>
-											<FontAwesomeIcon icon='fa-solid fa-caret-down' />
-										</span>
-
-										<span
-											className={`${styles.costText} ${styles.amountTexts}`}>
-											800
-										</span>
-										
+											<span
+												className={`${styles.costText} ${styles.amountTexts}`}>
+												800
+											</span>
+										</div>
 									</div>
 								</div>
 
