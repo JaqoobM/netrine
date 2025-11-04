@@ -229,11 +229,19 @@ export default function AddTransactionModal({ isModalOpen }) {
 							idValue={'amount'}
 						/>
 
-						<input
-							ref={dateRef}
-							type='date'
-							style={{ marginBottom: '2.5rem' }}
-						/>
+						{/* INPUT DATE */}
+						<div className={styles.datepickerContainer}>
+							<input
+								className={styles.datepicker}
+								ref={dateRef}
+								type='date'
+								style={{ marginBottom: '2.5rem' }}
+								id='date'
+							/>
+							<label className={styles.datepickerLabel} htmlFor='date'>
+								Data
+							</label>
+						</div>
 
 						{/* BUTTON WALLETS */}
 						<DropdownBtn
