@@ -20,6 +20,7 @@
 	display: flex;
 	// font-size: 1.4rem;
 	padding: 1.25rem;
+	font-weight: 300;
 }
 
 .amountBoxes {
@@ -39,10 +40,6 @@
 	margin-right: 5rem;
 }
 
-.costBox {
-	// margin-right: 1rem;
-}
-
 .costIcon {
 	color: #ff1f1f;
 }
@@ -52,7 +49,6 @@
 }
 
 .date {
-	// margin-left: 1rem;
 	color: colors.$blue;
 }
 
