@@ -3,6 +3,7 @@ import React, { useState, useRef, use, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { TransactionsContext } from '../../../layouts/AppLayout/AppLayout';
+import { ToggleModalContext } from '../../../layouts/AppLayout/AppLayout';
 
 export default function TransactionsList() {
 	const [transactions, setTransactions] = useState([]);
@@ -10,6 +11,7 @@ export default function TransactionsList() {
 	const [monthlyTotal, setMonthlyTotal] = useState({});
 
 	const transactionsContext = use(TransactionsContext);
+	const toggleModalContext = use(ToggleModalContext);
 
 	useEffect(() => {
 		const sortTransactionsHandler = (transactions, sortType) => {
@@ -163,7 +165,7 @@ export default function TransactionsList() {
 				} else {
 					isNewMonth = false;
 				}
-				console.log(monthlyTotal);
+
 				return (
 					<React.Fragment key={transaction._id || transaction.customId}>
 						{transaction === transactions[0] || isDifferent ? (
@@ -236,16 +238,13 @@ export default function TransactionsList() {
 								</div>
 
 								<div
-									onClick={() => {
-										props.modalHandler('editBtn');
-										props.editTransactionHandler(
-											transaction._id,
-											transaction.customId
-										);
+									onClick={(e) => {
+										toggleModalContext(e.target.closest('[id]').id);
 									}}
 									className={`${styles.transaction} ${
 										isFirst ? styles.transactionFirstBorder : ''
-									}`}>
+									}`}
+									id={transaction._id || transaction.customId}>
 									<span className={styles.iconBg}>
 										<span className={styles.icon}>
 											<FontAwesomeIcon icon={faCartShopping} />
@@ -268,16 +267,13 @@ export default function TransactionsList() {
 							</>
 						) : (
 							<div
-								onClick={() => {
-									props.modalHandler('editBtn');
-									props.editTransactionHandler(
-										transaction._id,
-										transaction.customId
-									);
+								onClick={(e) => {
+									toggleModalContext(e.target.closest('[id]').id);
 								}}
 								className={`${styles.transaction} ${
 									isBetween ? styles.transactionBetweenBorder : ''
-								} ${isLast ? styles.transactionLastBorder : ''}`}>
+								} ${isLast ? styles.transactionLastBorder : ''}`}
+								id={transaction._id || transaction.customId}>
 								<span className={styles.iconBg}>
 									<span className={styles.icon}>
 										<FontAwesomeIcon icon={faCartShopping} />

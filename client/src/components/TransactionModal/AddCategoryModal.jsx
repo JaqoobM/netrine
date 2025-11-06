@@ -1,5 +1,5 @@
 import styles from './AddCategoryModal.module.scss';
-import { CloseContext } from './TransactionModal';
+// import { CloseContext } from './TransactionModal';
 import CloseButton from '../CloseButton/CloseButton';
 import Header2 from '../Header2/Header2';
 import Input from '../Input/Input';
@@ -68,7 +68,7 @@ export default function AddCategoryModal({
 	return (
 		<div className={styles.wrapper}>
 			<div className={`${styles.modalContainer} ${isOpen && styles.modalIsOpen}`}>
-				<CloseButton value={use(CloseContext)} handleClear={handleClear} />
+				{/* <CloseButton value={use(CloseContext)} handleClear={handleClear} /> */}
 				<form onSubmit={handleSubmit}>
 					<Header2 value={'Create a new category'} />
 					<Input

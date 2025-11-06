@@ -60,3 +60,10 @@
 .iconActivated {
 	color: #219ebc;
 }
+
+
+@media (min-width: 1024px) {
+	.navMobile {
+		display: none;
+	}
+}

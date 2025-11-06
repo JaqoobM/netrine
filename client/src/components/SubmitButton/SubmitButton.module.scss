@@ -1,5 +1,4 @@
 .submitBtn {
-	// margin-top: 2.5rem;
 	height: 4.8rem;
 	width: 100%;
 	border-radius: 2.5rem;
@@ -13,4 +12,9 @@
 	&:hover {
 		box-shadow: 0px 0px 9px -3px #fb8500;
 	}
+}
+
+.deleteBtn {
+	margin-top: 2.5rem;
+	background-color: #ff4a4a;
 }

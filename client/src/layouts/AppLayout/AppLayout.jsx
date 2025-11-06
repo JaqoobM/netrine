@@ -10,6 +10,8 @@ export const TransactionsContext = createContext(null);
 export default function Applayout() {
 	const baseURL = import.meta.env.VITE_API_URL;
 	const [transactions, setTransactions] = useState([]);
+	const [transactionId, setTransactionId] = useState('');
+	const [modalType, setModalType] = useState(null);
 
 	const updateFromDB = (transactionsList) => {
 		setTransactions(transactionsList);
@@ -21,8 +23,15 @@ export default function Applayout() {
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
-	const handleToggleModal = () => {
+	const handleToggleModal = (id = null) => {
 		setIsModalOpen((prev) => !prev);
+		setModalType('Add');
+		setTransactionId('');
+
+		if (id) {
+			setTransactionId(id);
+			setModalType('Edit/Delete');
+		}
 	};
 
 	return (
@@ -35,7 +44,12 @@ export default function Applayout() {
 						list: transactions,
 						updateFromDB,
 					}}>
-					<TransactionModal isModalOpen={isModalOpen} />
+					<TransactionModal
+						isModalOpen={isModalOpen}
+						transactionId={transactionId}
+						modalType={modalType}
+					/>
+
 					<main>
 						<Outlet />
 					</main>

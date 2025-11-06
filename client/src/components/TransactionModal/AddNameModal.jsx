@@ -3,7 +3,7 @@ import CloseButton from '../CloseButton/CloseButton';
 import Input from '../Input/Input';
 import SubmitButton from '../SubmitButton/SubmitButton';
 import Header2 from '../Header2/Header2';
-import { CloseContext } from './TransactionModal';
+// import { CloseContext } from './TransactionModal';
 import { use, useEffect, useState } from 'react';
 
 export default function AddNameModal({
@@ -18,7 +18,7 @@ export default function AddNameModal({
 	const [isFocused, setIsFocused] = useState(false);
 	const [errorText, setErrorText] = useState(null);
 
-	const closeModal = use(CloseContext);
+	// const closeModal = use(CloseContext);
 
 	const handleValueChange = (value) => {
 		setInputValue(value);
