@@ -15,7 +15,10 @@ import useClickOutside from '../../hooks/useClickOutside';
 import Input from '../Input/Input';
 import DropdownInput from '../Dropdown/DropdownInput';
 import AddItemBtn from './AddItemBtn';
-import { ModalContext } from '../../layouts/AppLayout/AppLayout';
+import {
+	ToggleModalContext,
+	TransactionsContext,
+} from '../../layouts/AppLayout/AppLayout';
 import CloseButton from '../CloseButton/CloseButton';
 import SubmitButton from '../SubmitButton/SubmitButton';
 import AddNameModal from './AddNameModal.jsx';
@@ -84,14 +87,14 @@ export default function AddTransactionModal({ isModalOpen }) {
 	};
 
 	const [isSwitched, setIsSwitched] = useState(false);
-	const [inputValue, setInputValue] = useState('');
+	const [nameInputValue, setNameInputValue] = useState('');
 	const [amountInputValue, setAmountInputValue] = useState('');
 
 	const handleNameValue = (value) => {
-		setInputValue(value);
+		setNameInputValue(value);
 	};
 
-	const handleAmountInputValueChange = (value) => {
+	const handleAmountInputValue = (value) => {
 		setAmountInputValue(value);
 	};
 
@@ -116,22 +119,18 @@ export default function AddTransactionModal({ isModalOpen }) {
 		setIsAddCategoryModalOpen(false);
 	};
 
+	const toggleModalContext = use(ToggleModalContext);
+	const transactionsContext = use(TransactionsContext);
 	const addTransactionData = async (newTransaction) => {
 		try {
 			await axios.post(
 				`${baseURL || 'http://localhost:3000'}/api/transactions`,
-				{
-					name: newTransaction.name,
-					amount: newTransaction.amount,
-					date: newTransaction.date,
-					type: newTransaction.type,
-				}
+				newTransaction
 			);
-
-			// const newTransactions = [...transactions];
-			// newTransactions.push(newTransaction);
-
-			// sortTransactionsHandler(newTransactions, 'newest');
+			toggleModalContext();
+			transactionsContext.addNewTransaction(newTransaction);
+			setNameInputValue('');
+			setAmountInputValue('');
 		} catch (e) {
 			console.log('Nie udało się wysłać na serwer!', e);
 		}
@@ -150,14 +149,22 @@ export default function AddTransactionModal({ isModalOpen }) {
 			type = 'income';
 		}
 
+		const chars =
+			'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890123456789';
+
+		let result = '';
+		for (let index = 0; index < 24; index++) {
+			result += chars.charAt(Math.floor(Math.random() * chars.length));
+		}
+
 		const newTransaction = {
-			name: inputValue,
+			name: nameInputValue,
 			amount: amountInputValue,
 			date: dateRef.current.value,
 			type,
+			customId: result,
 		};
 
-		console.log(newTransaction);
 		addTransactionData(newTransaction);
 	};
 
@@ -168,7 +175,7 @@ export default function AddTransactionModal({ isModalOpen }) {
 				<AddNameModal
 					isOpen={isAddNameModalOpen}
 					allNames={allNames}
-					newName={inputValue}
+					newName={nameInputValue}
 					handleNameValue={handleNameValue}
 					addNewName={addNewName}
 				/>
@@ -182,7 +189,7 @@ export default function AddTransactionModal({ isModalOpen }) {
 					className={`${styles.modalContainer} ${
 						isModalOpen && styles.modalOpen
 					}`}>
-					<CloseButton value={use(ModalContext)} />
+					<CloseButton value={use(ToggleModalContext)} />
 					<form onSubmit={handleSubmit} className={styles.form}>
 						<Header2 value={'Create new transaction'} />
 
@@ -225,7 +232,7 @@ export default function AddTransactionModal({ isModalOpen }) {
 							label={'Amount'}
 							type={'number'}
 							inputValue={amountInputValue}
-							onChange={handleAmountInputValueChange}
+							onChange={handleAmountInputValue}
 							idValue={'amount'}
 						/>
 

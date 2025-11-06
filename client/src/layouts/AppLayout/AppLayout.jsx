@@ -1,28 +1,47 @@
 import NavMobile from '../../components/NavMobile/NavMobile';
 import TransactionModal from '../../components/TransactionModal/TransactionModal';
 import { Outlet } from 'react-router';
-import { useState, createContext, useContext } from 'react';
+import { useState, createContext, useContext, useEffect } from 'react';
 import Toast from '../../components/Toast/Toast';
 
-export const ModalContext = createContext(null);
+export const ToggleModalContext = createContext(null);
+export const TransactionsContext = createContext(null);
 
 export default function Applayout() {
-	const [isActive, setIsActive] = useState(false);
+	const baseURL = import.meta.env.VITE_API_URL;
+	const [transactions, setTransactions] = useState([]);
 
-	const modalActivating = () => {
-		setIsActive((prev) => !prev);
+	const updateFromDB = (transactionsList) => {
+		setTransactions(transactionsList);
+	};
+
+	const addNewTransaction = (newTransaction) => {
+		setTransactions((prev) => [...prev, newTransaction]);
+	};
+
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const handleToggleModal = () => {
+		setIsModalOpen((prev) => !prev);
 	};
 
 	return (
 		<>
 			<Toast />
-			<ModalContext value={modalActivating}>
-				<TransactionModal isModalOpen={isActive} />
-				<main>
-					<Outlet />
-				</main>
-				<NavMobile modalActivating={modalActivating} />
-			</ModalContext>
+			<ToggleModalContext value={handleToggleModal}>
+				<TransactionsContext
+					value={{
+						addNewTransaction,
+						list: transactions,
+						updateFromDB,
+					}}>
+					<TransactionModal isModalOpen={isModalOpen} />
+					<main>
+						<Outlet />
+					</main>
+					<NavMobile toggleModal={handleToggleModal} />
+				</TransactionsContext>
+			</ToggleModalContext>
 		</>
 	);
 }

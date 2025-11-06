@@ -180,7 +180,10 @@ function Navigation(props) {
 					</p>
 				</NavLink>
 
-				<button type='button' onClick={() => props.modalActivating()} className={styles.circle}>
+				<button
+					type='button'
+					onClick={() => props.toggleModal()}
+					className={styles.circle}>
 					<span className={styles.plusIcon}>
 						<FontAwesomeIcon icon='fa-solid fa-plus' />
 					</span>

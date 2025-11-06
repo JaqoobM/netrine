@@ -1,11 +1,71 @@
 import styles from './TransactionsList.module.scss';
-// import React from 'react';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, use, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
+import { TransactionsContext } from '../../../layouts/AppLayout/AppLayout';
 
-export default function TransactionsList({ transactionsList }) {
-	const transactions = transactionsList;
+export default function TransactionsList() {
+	const [transactions, setTransactions] = useState([]);
+	const [amountSum, setAmountSum] = useState({});
+
+	const transactionsContext = use(TransactionsContext);
+
+	useEffect(() => {
+		const sortTransactionsHandler = (transactions, sortType) => {
+			let sortedTransactions;
+
+			if (sortType === 'newest') {
+				sortedTransactions = [...transactions].sort((a, b) => {
+					const dateA = new Date(a.date);
+					const dateB = new Date(b.date);
+					return dateB - dateA;
+				});
+			} else if (sortType === 'oldest') {
+				sortedTransactions = [...transactions].sort((a, b) => {
+					const dateA = new Date(a.date);
+					const dateB = new Date(b.date);
+					return dateA - dateB;
+				});
+			}
+			setTransactions(sortedTransactions);
+		};
+
+		const balanceCalculation = () => {
+			const dates = [];
+			const amountSum = {};
+
+			transactionsContext.list.forEach((transaction) => {
+				if (!dates.includes(transaction.date)) {
+					dates.push(transaction.date);
+				}
+			});
+
+			dates.forEach((date) => {
+				const newDate = transactionsContext.list.filter(
+					(transaction) => transaction.date === date
+				);
+
+				let income = 0;
+				let cost = 0;
+
+				newDate.forEach((transaction) => {
+					if (transaction.type === 'income') {
+						income += Number(transaction.amount);
+					} else {
+						cost += Number(transaction.amount);
+					}
+				});
+
+				amountSum[date] = {
+					income,
+					cost,
+				};
+			});
+			setAmountSum(amountSum);
+		};
+		balanceCalculation();
+		sortTransactionsHandler(transactionsContext.list, 'newest');
+	}, [transactionsContext.list]);
 
 	return (
 		<div className={styles.transactions}>
@@ -45,7 +105,7 @@ export default function TransactionsList({ transactionsList }) {
 							<>
 								<div className={styles.topBar}>
 									<span className={styles.date}>
-										{transaction.date.split('-').reverse().join('.')}
+										{transaction.date?.split('-').reverse().join('.')}
 									</span>
 
 									<div className={styles.amountContainer}>
@@ -58,7 +118,7 @@ export default function TransactionsList({ transactionsList }) {
 
 											<span
 												className={`${styles.incomeText} ${styles.amountTexts}`}>
-												1800
+												{amountSum[transaction.date].income}
 											</span>
 										</div>
 
@@ -70,7 +130,7 @@ export default function TransactionsList({ transactionsList }) {
 
 											<span
 												className={`${styles.costText} ${styles.amountTexts}`}>
-												800
+												{amountSum[transaction.date].cost}
 											</span>
 										</div>
 									</div>
@@ -95,7 +155,12 @@ export default function TransactionsList({ transactionsList }) {
 
 									<div className={styles.titleContainer}>
 										<span className={styles.title}>{transaction.name}</span>
-										<span className={styles.price}>
+										<span
+											className={`${styles.price} ${
+												transaction.type === 'cost'
+													? styles.redPrice
+													: styles.greenPrice
+											}`}>
 											{transaction.amount}
 											<span className={styles.priceEnding}>zł</span>
 										</span>
@@ -122,7 +187,12 @@ export default function TransactionsList({ transactionsList }) {
 
 								<div className={styles.titleContainer}>
 									<span className={styles.title}>{transaction.name}</span>
-									<span className={styles.price}>
+									<span
+										className={`${styles.price} ${
+											transaction.type === 'cost'
+												? styles.redPrice
+												: styles.greenPrice
+										}`}>
 										{transaction.amount}
 										<span className={styles.priceEnding}>zł</span>
 									</span>

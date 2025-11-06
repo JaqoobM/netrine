@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route } from 'react-router';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 
-console.log('React app initialized');
 library.add(fas);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
