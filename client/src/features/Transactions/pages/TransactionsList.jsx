@@ -7,6 +7,7 @@ import { TransactionsContext } from '../../../layouts/AppLayout/AppLayout';
 export default function TransactionsList() {
 	const [transactions, setTransactions] = useState([]);
 	const [amountSum, setAmountSum] = useState({});
+	const [monthlyTotal, setMonthlyTotal] = useState({});
 
 	const transactionsContext = use(TransactionsContext);
 
@@ -30,7 +31,7 @@ export default function TransactionsList() {
 			setTransactions(sortedTransactions);
 		};
 
-		const balanceCalculation = () => {
+		const dayBalanceCalculation = () => {
 			const dates = [];
 			const amountSum = {};
 
@@ -63,7 +64,43 @@ export default function TransactionsList() {
 			});
 			setAmountSum(amountSum);
 		};
-		balanceCalculation();
+
+		const monthBalanceCalculation = () => {
+			const months = [];
+			const monthlyTotal = {};
+
+			transactionsContext.list.forEach((transaction) => {
+				if (!months.includes(transaction.date.split('-')[1])) {
+					months.push(transaction.date.split('-')[1]);
+				}
+			});
+
+			months.forEach((month) => {
+				const newDate = transactionsContext.list.filter(
+					(transaction) => transaction.date.split('-')[1] === month
+				);
+
+				let income = 0;
+				let cost = 0;
+
+				newDate.forEach((transaction) => {
+					if (transaction.type === 'income') {
+						income += Number(transaction.amount);
+					} else {
+						cost += Number(transaction.amount);
+					}
+				});
+
+				monthlyTotal[month] = {
+					income,
+					cost,
+				};
+			});
+			setMonthlyTotal(monthlyTotal);
+		};
+
+		monthBalanceCalculation();
+		dayBalanceCalculation();
 		sortTransactionsHandler(transactionsContext.list, 'newest');
 	}, [transactionsContext.list]);
 
@@ -99,10 +136,72 @@ export default function TransactionsList() {
 					isLast = true;
 				}
 
+				const month = transaction.date.split('-');
+
+				const months = {
+					'01': 'January',
+					'02': 'February',
+					'03': 'March',
+					'04': 'April',
+					'05': 'May',
+					'06': 'June',
+					'07': 'July',
+					'08': 'August',
+					'09': 'September',
+					10: 'October',
+					11: 'November',
+					12: 'December',
+				};
+
+				let isNewMonth = false;
+
+				if (
+					transactions[index - 1]?.date.split('-')[1] !=
+					transactions[index]?.date.split('-')[1]
+				) {
+					isNewMonth = true;
+				} else {
+					isNewMonth = false;
+				}
+				console.log(monthlyTotal);
 				return (
 					<React.Fragment key={transaction._id || transaction.customId}>
 						{transaction === transactions[0] || isDifferent ? (
 							<>
+								{isNewMonth && (
+									<div className={styles.topBarMonth}>
+										<span className={styles.dateMonth}>{months[month[1]]}</span>
+
+										<div className={styles.amountContainer}>
+											<div
+												className={`${styles.incomeBox} ${styles.amountBoxes}`}>
+												<span
+													className={`${styles.incomeIcon} ${styles.amountIcons}`}>
+													<FontAwesomeIcon icon='fa-solid fa-caret-up' />
+												</span>
+
+												<span
+													className={`${styles.incomeText} ${styles.amountTexts}`}>
+													{monthlyTotal[transaction.date.split('-')[1]].income}
+												</span>
+											</div>
+
+											<div
+												className={`${styles.costBox} ${styles.amountBoxes}`}>
+												<span
+													className={`${styles.costIcon} ${styles.amountIcons}`}>
+													<FontAwesomeIcon icon='fa-solid fa-caret-down' />
+												</span>
+
+												<span
+													className={`${styles.costText} ${styles.amountTexts}`}>
+													{monthlyTotal[transaction.date.split('-')[1]].cost}
+												</span>
+											</div>
+										</div>
+									</div>
+								)}
+
 								<div className={styles.topBar}>
 									<span className={styles.date}>
 										{transaction.date?.split('-').reverse().join('.')}
