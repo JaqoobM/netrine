@@ -8,6 +8,7 @@ import {
 	use,
 	createContext,
 	act,
+	Children,
 } from 'react';
 import Dropdown from '../Dropdown/Dropdown';
 import DropdownBtn from '../Dropdown/DropdownBtn';
@@ -32,8 +33,8 @@ export const NameContext = createContext(null);
 
 export default function AddTransactionModal({
 	isModalOpen,
-	transactionId = null,
-	modalType = null,
+	transactionId = '',
+	modalType = '',
 }) {
 	const baseURL = import.meta.env.VITE_API_URL;
 	const numbersArr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -157,16 +158,37 @@ export default function AddTransactionModal({
 				`${baseURL || 'http://localhost:3000'}/api/transactions`,
 				newTransaction
 			);
-			toggleModalContext();
 			transactionsContext.addNewTransaction(newTransaction);
-			setNameInputValue('');
-			setAmountInputValue('');
 		} catch (e) {
 			console.log('Nie udało się wysłać na serwer!', e);
 		}
 	};
 
-	const dateRef = useRef();
+	const editTransactionData = async (editedTransaction) => {
+		try {
+			await axios.put(
+				`${baseURL || 'http://localhost:3000'}/api/transactions`,
+				editedTransaction
+			);
+			const transactions = transactionsContext.list.filter(
+				(transaction) =>
+					(transaction._id || transaction.customId) != transactionId
+			);
+			transactionsContext.transactionsUpdate([
+				...transactions,
+				editedTransaction,
+			]);
+		} catch {
+			console.log('Nie edytowano');
+		}
+	};
+
+	const handleClear = () => {
+		setIsSwitched(false);
+		setAmountInputValue('');
+		setNameInputValue('');
+		setDateInputValue(actualDate);
+	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -187,22 +209,31 @@ export default function AddTransactionModal({
 			result += chars.charAt(Math.floor(Math.random() * chars.length));
 		}
 
-		const newTransaction = {
-			name: nameInputValue,
-			amount: amountInputValue,
-			date: dateRef.current.value,
-			type,
-			customId: result,
-		};
+		if (modalType === 'add') {
+			const newTransaction = {
+				name: nameInputValue,
+				amount: amountInputValue,
+				date: dateRef.current.value,
+				type,
+				customId: result,
+			};
 
-		addTransactionData(newTransaction);
-	};
+			addTransactionData(newTransaction);
+		} else if (transactionId) {
+			const editedTransaction = transactionsContext.list.find(
+				(transaction) =>
+					(transaction._id || transaction.customId) === transactionId
+			);
 
-	const handleClear = () => {
-		setIsSwitched(false);
-		setAmountInputValue('');
-		setNameInputValue('');
-		setDateInputValue(actualDate);
+			editedTransaction.name = nameInputValue;
+			editedTransaction.amount = amountInputValue;
+			editedTransaction.date = dateInputValue;
+			editedTransaction.type = type;
+
+			editTransactionData(editedTransaction);
+		}
+		handleClear();
+		toggleModalContext();
 	};
 
 	return (
@@ -292,7 +323,6 @@ export default function AddTransactionModal({
 					<div className={styles.datepickerContainer}>
 						<input
 							className={styles.datepicker}
-							ref={dateRef}
 							type='date'
 							style={{ marginBottom: '2.5rem' }}
 							id='date'
@@ -335,7 +365,7 @@ export default function AddTransactionModal({
 						value={modalType === 'add' ? 'Add transaction' : 'Edit transaction'}
 						buttonType={'add'}
 					/>
-					{modalType === 'Edit/Delete' && (
+					{modalType === 'edit/delete' && (
 						<SubmitButton value={'Delete transaction'} buttonType={'delete'} />
 					)}
 				</form>

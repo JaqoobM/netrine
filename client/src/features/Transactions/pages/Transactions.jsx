@@ -54,7 +54,7 @@ function Transactions() {
 					return newTransaction;
 				});
 
-				transactionsContext.updateFromDB(transactionsData);
+				transactionsContext.transactionsUpdate(transactionsData);
 			} catch (e) {
 				console.log(e, 'Nie udało się pobrać');
 			}
@@ -83,28 +83,28 @@ function Transactions() {
 	// 	}
 	// };
 
-	const editTransactionData = async (transaction) => {
-		try {
-			await axios.put(
-				`${baseURL || 'http://localhost:3000'}/api/transactions`,
-				{
-					_id: transaction._id,
-					name: transaction.name,
-					amount: transaction.amount,
-					date: transaction.date,
-					customId: transaction.customId,
-				}
-			);
+	// const editTransactionData = async (transaction) => {
+	// 	try {
+	// 		await axios.put(
+	// 			`${baseURL || 'http://localhost:3000'}/api/transactions`,
+	// 			{
+	// 				_id: transaction._id,
+	// 				name: transaction.name,
+	// 				amount: transaction.amount,
+	// 				date: transaction.date,
+	// 				customId: transaction.customId,
+	// 			}
+	// 		);
 
-			const index = transactions.indexOf(editedTransaction);
-			const newTransactions = [...transactions];
-			newTransactions[index] = transaction;
+	// 		const index = transactions.indexOf(editedTransaction);
+	// 		const newTransactions = [...transactions];
+	// 		newTransactions[index] = transaction;
 
-			sortTransactionsHandler(newTransactions, 'newest');
-		} catch {
-			console.log('Nie edytowano');
-		}
-	};
+	// 		sortTransactionsHandler(newTransactions, 'newest');
+	// 	} catch {
+	// 		console.log('Nie edytowano');
+	// 	}
+	// };
 
 	const editTransactionHandler = (_id, customId) => {
 		const transaction = transactions.find((transaction) => {
