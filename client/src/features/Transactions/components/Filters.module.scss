@@ -5,6 +5,23 @@
 	right: 0;
 	left: 0;
 	overflow: hidden;
+	background-color: #ffffff9f;
+}
+
+.bg {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+.blur {
+	opacity: 1;
+	z-index: 99999;
+	backdrop-filter: blur(1rem);
 }
 
 .box {
@@ -18,12 +35,12 @@
 	width: 22rem;
 	z-index: 100000;
 	transform: translateX(100%);
-	transition: transform 0.3s;
-     // padding: 2.5rem 2.5rem 0;
+	transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .openFilters {
-     transform: translateX(0);
+	transform: translateX(0);
+	box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.1);
 }
 
 .title {
@@ -40,5 +57,5 @@
 	padding: 0 1.5rem 0;
 	// margin-top: 2rem;
 	color: #219ebc;
-     background-color: rgba(33, 157, 188, 0.10);
+	background-color: rgba(33, 157, 188, 0.1);
 }
