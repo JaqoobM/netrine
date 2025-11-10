@@ -1,6 +1,6 @@
 import express from 'express';
 const app = express();
-import bodyParser from 'body-parser';
+// import bodyParser from 'body-parser';
 import routers from './routers/router.js';
 import mongoose from './db/mongoose.js';
 import cors from 'cors';
@@ -14,7 +14,7 @@ const folderPath = path.dirname(filePath)
 
 connectDB();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json())
 app.use('/', routers);
 
 app.use(express.static(path.join(folderPath, '../../client/build')));

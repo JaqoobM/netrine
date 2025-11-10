@@ -71,26 +71,26 @@ export default function AddTransactionModal({
 		},
 	]);
 
-	const [allNames, setAllNames] = useState([
-		'Lidl',
-		'Biedronka',
-		'Dino',
-		'Rachunek za prąd',
-		'Zakupy na Zalando',
-		'Naprawa samochodu u najlepszego mechanika w mieście Płock',
-		'Fryzjer',
-		'Woda',
-		'Pizza',
-		'Kebab',
-	]);
+	// const [allNames, setAllNames] = useState([
+	// 	'Lidl',
+	// 	'Biedronka',
+	// 	'Dino',
+	// 	'Rachunek za prąd',
+	// 	'Zakupy na Zalando',
+	// 	'Naprawa samochodu u najlepszego mechanika w mieście Płock',
+	// 	'Fryzjer',
+	// 	'Woda',
+	// 	'Pizza',
+	// 	'Kebab',
+	// ]);
 
-	const [selectedWallet, setSelectedWallet] = useState(allWallets[0]);
-	const walletsToDisplay = allWallets.filter(
-		(wallet) => wallet != selectedWallet
-	);
-	const handleWallets = (wallet) => {
-		setSelectedWallet(wallet);
-	};
+	// const [selectedWallet, setSelectedWallet] = useState(allWallets[0]);
+	// const walletsToDisplay = allWallets.filter(
+	// 	(wallet) => wallet != selectedWallet
+	// );
+	// const handleWallets = (wallet) => {
+	// 	setSelectedWallet(wallet);
+	// };
 
 	const [isSwitched, setIsSwitched] = useState(false);
 	const [nameInputValue, setNameInputValue] = useState('');
@@ -128,11 +128,11 @@ export default function AddTransactionModal({
 		setDateInputValue(value);
 	};
 
-	const [isAddNameModalOpen, setIsNameModalOpen] = useState(false);
+	// const [isAddNameModalOpen, setIsNameModalOpen] = useState(false);
 
-	const handleAddNameModalToggle = () => {
-		setIsNameModalOpen((prev) => !prev);
-	};
+	// const handleAddNameModalToggle = () => {
+	// 	setIsNameModalOpen((prev) => !prev);
+	// };
 
 	const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
 
@@ -140,48 +140,17 @@ export default function AddTransactionModal({
 		setIsAddCategoryModalOpen(!isAddCategoryModalOpen);
 	};
 
-	const addNewName = (value) => {
-		setAllNames((prev) => [...prev, value]);
-	};
+	// const addNewName = (value) => {
+	// 	setAllNames((prev) => [...prev, value]);
+	// };
 
-	const handleClose = () => {
-		setIsNameModalOpen(false);
-		setIsAddCategoryModalOpen(false);
-	};
+	// const handleClose = () => {
+	// 	setIsNameModalOpen(false);
+	// 	setIsAddCategoryModalOpen(false);
+	// };
 
 	const toggleModalContext = use(ToggleModalContext);
 	const transactionsContext = use(TransactionsContext);
-
-	const addTransactionData = async (newTransaction) => {
-		try {
-			await axios.post(
-				`${baseURL || 'http://localhost:3000'}/api/transactions`,
-				newTransaction
-			);
-			transactionsContext.addNewTransaction(newTransaction);
-		} catch (e) {
-			console.log('Nie udało się wysłać na serwer!', e);
-		}
-	};
-
-	const editTransactionData = async (editedTransaction) => {
-		try {
-			await axios.put(
-				`${baseURL || 'http://localhost:3000'}/api/transactions`,
-				editedTransaction
-			);
-			const transactions = transactionsContext.list.filter(
-				(transaction) =>
-					(transaction._id || transaction.customId) != transactionId
-			);
-			transactionsContext.transactionsUpdate([
-				...transactions,
-				editedTransaction,
-			]);
-		} catch {
-			console.log('Nie edytowano');
-		}
-	};
 
 	const handleClear = () => {
 		setIsSwitched(false);
@@ -190,50 +159,104 @@ export default function AddTransactionModal({
 		setDateInputValue(actualDate);
 	};
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-
-		let type;
-
-		if (isSwitched === false) {
-			type = 'cost';
-		} else {
-			type = 'income';
+	const addTransactionData = async (newTransaction) => {
+		try {
+			const response = await axios.post(
+				`${baseURL || 'http://localhost:3000'}/api/transactions`,
+				newTransaction
+			);
+			return response.data;
+		} catch (e) {
+			console.log('Nie udało się wysłać na serwer!', e);
 		}
+	};
 
-		const chars =
-			'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890123456789';
-
-		let result = '';
-		for (let index = 0; index < 24; index++) {
-			result += chars.charAt(Math.floor(Math.random() * chars.length));
+	const editTransactionData = async (editedTransaction) => {
+		try {
+			const response = await axios.put(
+				`${baseURL || 'http://localhost:3000'}/api/transactions`,
+				editedTransaction
+			);
+			return response;
+		} catch {
+			console.log('Nie edytowano');
 		}
+	};
 
-		if (modalType === 'add') {
-			const newTransaction = {
-				name: nameInputValue,
-				amount: amountInputValue,
-				date: dateRef.current.value,
-				type,
-				customId: result,
-			};
-
-			addTransactionData(newTransaction);
-		} else if (transactionId) {
-			const editedTransaction = transactionsContext.list.find(
-				(transaction) =>
-					(transaction._id || transaction.customId) === transactionId
+	const deleteTransactionData = async () => {
+		try {
+			await axios.delete(
+				`${baseURL || 'http://localhost:3000'}/api/transactions/` +
+					transactionId
 			);
 
-			editedTransaction.name = nameInputValue;
-			editedTransaction.amount = amountInputValue;
-			editedTransaction.date = dateInputValue;
-			editedTransaction.type = type;
+			const transactions = transactionsContext.list.filter(
+				(transaction) =>
+					(transaction._id || transaction.customId) != transactionId
+			);
 
-			editTransactionData(editedTransaction);
+			handleClear();
+			toggleModalContext();
+			transactionsContext.transactionsUpdate(transactions);
+		} catch {
+			console.log('Nie usunięto transakcji');
 		}
-		handleClear();
-		toggleModalContext();
+	};
+
+	const createTransaction = async () => {
+		const newTransaction = {
+			name: nameInputValue,
+			amount: amountInputValue,
+			date: dateInputValue,
+			type: isSwitched ? 'income' : 'cost',
+		};
+		try {
+			const response = await addTransactionData(newTransaction);
+			response.date = response.date.split('T')[0];
+			transactionsContext.addNewTransaction(response);
+		} catch (error) {
+			console.log('error');
+		}
+	};
+
+	const editTransaction = async () => {
+		const editedTransaction = transactionsContext.list.find(
+			(transaction) =>
+				(transaction._id || transaction.customId) === transactionId
+		);
+
+		editedTransaction.name = nameInputValue;
+		editedTransaction.amount = amountInputValue;
+		editedTransaction.date = dateInputValue;
+		editedTransaction.type = type;
+
+		const transactions = transactionsContext.list.filter(
+			(transaction) =>
+				(transaction._id || transaction.customId) != transactionId
+		);
+
+		try {
+			const response = await editTransactionData(editedTransaction);
+			transactionsContext.transactionsUpdate([...transactions, response]);
+		} catch (error) {}
+	};
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+
+		if (modalType === 'add') {
+			try {
+				await createTransaction();
+				handleClear();
+				toggleModalContext();
+			} catch (error) {}
+		} else if (modalType === 'edit/delete') {
+			try {
+				await editTransaction();
+				handleClear();
+				toggleModalContext();
+			} catch (error) {}
+		}
 	};
 
 	return (
@@ -361,12 +384,32 @@ export default function AddTransactionModal({
 						<span className={styles.dropdownTitle}>Repeat</span>
 					</button>
 
-					<SubmitButton
-						value={modalType === 'add' ? 'Add transaction' : 'Edit transaction'}
-						buttonType={'add'}
-					/>
+					{modalType === 'add' && (
+						<SubmitButton
+							id='addBtn'
+							value='Add transaction'
+							buttonType='add'
+							btnType='submit'
+						/>
+					)}
+
 					{modalType === 'edit/delete' && (
-						<SubmitButton value={'Delete transaction'} buttonType={'delete'} />
+						<SubmitButton
+							id='editBtn'
+							value='Edit transaction'
+							buttonType='add'
+							btnType='submit'
+						/>
+					)}
+
+					{modalType === 'edit/delete' && (
+						<SubmitButton
+							id='deleteBtn'
+							value='Delete transaction'
+							buttonType='delete'
+							btnType='button'
+							onClick={deleteTransactionData}
+						/>
 					)}
 				</form>
 			</div>

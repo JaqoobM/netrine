@@ -5,141 +5,55 @@ import { React, use } from 'react';
 // import FiltersMobile from '../../../components/FiltersMobile/FiltersMobile.jsx';
 // import AddTransactionModal from '../../../components/TransactionModal/TransactionModal.jsx';
 // import CategoryModal from '../../../components/Categories/Categories.jsx';
-import Navigation from '../../../components/NavMobile/NavMobile.jsx';
 import TransactionsList from './TransactionsList';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendar } from '@fortawesome/free-regular-svg-icons';
-import {
-	faEllipsisVertical,
-	faMagnifyingGlass,
-	faPlus,
-	faGear,
-	faRightFromBracket,
-	faSquareUpRight,
-	faList,
-	faCartShopping,
-} from '@fortawesome/free-solid-svg-icons';
 import { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import { TransactionsContext } from '../../../layouts/AppLayout/AppLayout.jsx';
 
 function Transactions() {
 	const settingsBoxRef = useRef(null);
-	const [ModalIsOpen, setModalIsOpen] = useState(false);
+	// const [ModalIsOpen, setModalIsOpen] = useState(false);
 	const [transactions, setTransactions] = useState([]);
-	const [addModalIsOpen, setAddModalIsOpen] = useState(false);
+	// const [addModalIsOpen, setAddModalIsOpen] = useState(false);
 	const [categoryModalIsOpen, setCategoryModalIsOpen] = useState(false);
 	const [categoryList, setCategoryList] = useState([]);
-	const [editedTransaction, setEditedTransaction] = useState([]);
+	// const [editedTransaction, setEditedTransaction] = useState([]);
 	const transactionsContext = use(TransactionsContext);
 
 	const baseURL = import.meta.env.VITE_API_URL;
 
-	useEffect(() => {
-		const fetchTransactions = async () => {
-			try {
-				const transactions = await axios.get(
-					`${baseURL || 'http://localhost:3000'}/api/transactions`
-				);
-
-				const transactionsData = transactions.data.map((transaction) => {
-					const newTransaction = {
-						_id: transaction._id,
-						name: transaction.name,
-						amount: transaction.amount,
-						date: transaction.date?.split('T')[0],
-						type: transaction.type,
-						customId: transaction.customId,
-					};
-					return newTransaction;
-				});
-
-				transactionsContext.transactionsUpdate(transactionsData);
-			} catch (e) {
-				console.log(e, 'Nie udało się pobrać');
-			}
-		};
-		fetchTransactions();
-	}, []);
-
-	// const addTransactionData = async (newTransaction) => {
-	// 	try {
-	// 		await axios.post(
-	// 			`${baseURL || 'http://localhost:3000'}/api/transactions`,
-	// 			{
-	// 				name: newTransaction.name,
-	// 				amount: newTransaction.amount,
-	// 				date: newTransaction.date,
-	// 				customId: newTransaction.customId,
-	// 			}
-	// 		);
-
-	// 		const newTransactions = [...transactions];
-	// 		newTransactions.push(newTransaction);
-
-	// 		sortTransactionsHandler(newTransactions, 'newest');
-	// 	} catch (e) {
-	// 		console.log('Nie udało się wysłać na serwer!', e);
-	// 	}
-	// };
-
-	// const editTransactionData = async (transaction) => {
-	// 	try {
-	// 		await axios.put(
-	// 			`${baseURL || 'http://localhost:3000'}/api/transactions`,
-	// 			{
-	// 				_id: transaction._id,
-	// 				name: transaction.name,
-	// 				amount: transaction.amount,
-	// 				date: transaction.date,
-	// 				customId: transaction.customId,
-	// 			}
-	// 		);
-
-	// 		const index = transactions.indexOf(editedTransaction);
-	// 		const newTransactions = [...transactions];
-	// 		newTransactions[index] = transaction;
-
-	// 		sortTransactionsHandler(newTransactions, 'newest');
-	// 	} catch {
-	// 		console.log('Nie edytowano');
-	// 	}
-	// };
-
-	const editTransactionHandler = (_id, customId) => {
-		const transaction = transactions.find((transaction) => {
-			if (_id) {
-				return transaction._id === _id;
-			} else {
-				return transaction.customId === customId;
-			}
-		});
-
-		setEditedTransaction(transaction);
-	};
-
-	const deleteTransactionData = async () => {
+	const getTransactionsFromApi = async () => {
 		try {
-			await axios.delete(
-				`${baseURL || 'http://localhost:3000'}/api/transactions/` +
-					(editedTransaction._id || editedTransaction.customId)
+			const response = await axios.get(
+				`${baseURL || 'http://localhost:3000'}/api/transactions`
 			);
-
-			const newTransactions = transactions.filter((transaction) => {
-				return editedTransaction._id
-					? transaction._id !== editedTransaction._id
-					: transaction.customId !== editedTransaction.customId;
-			});
-
-			sortTransactionsHandler(newTransactions, 'newest');
-		} catch {
-			console.log('Nie usunięto transakcji');
+			return response;
+		} catch (error) {
+			throw new Error('Failed to load transactions. Please try again later');
 		}
 	};
 
-	// const categoryHandler = (newCategory) => {
-	// 	setCategoryList((prevCategoryList) => [...prevCategoryList, newCategory]);
-	// };
+	const parseTransactions = (response) => {
+		return response.data.map((transaction) => ({
+			_id: transaction._id,
+			name: transaction.name,
+			amount: transaction.amount,
+			date: transaction.date?.split('T')[0],
+			type: transaction.type,
+			customId: transaction.customId,
+		}));
+	};
+
+	useEffect(() => {
+		const fetchTransactions = async () => {
+			try {
+				const response = await getTransactionsFromApi();
+				const parsedTransactions = parseTransactions(response);
+				transactionsContext.transactionsUpdate(parsedTransactions);
+			} catch (error) {}
+		};
+		fetchTransactions();
+	}, []);
 
 	const categoryModalHandler = () => {
 		setCategoryModalIsOpen(!categoryModalIsOpen);
@@ -211,7 +125,7 @@ function Transactions() {
 
 			{/* TRANSACTIONS */}
 			<TransactionsList
-				editTransactionHandler={editTransactionHandler}
+				// editTransactionHandler={editTransactionHandler}
 				transactionsList={transactions}
 				modalHandler={modalHandler}
 			/>

@@ -13,15 +13,19 @@ class TransactionControler {
 
 		try {
 			await transaction.save();
-			res.status(201).send('Zapisano transakcję');
+			res.status(201).json(transaction);
 		} catch (e) {
 			console.log(e, 'Nie zapisano transakcji');
 		}
 	}
 
 	async showTransactions(req, res) {
-		const transactions = await Transaction.find({}).sort({ date: -1 });
-		res.json(transactions);
+		try {
+			const transactions = await Transaction.find({}).sort({ date: -1 });
+			res.json(transactions);
+		} catch (error) {
+			console.log('error');
+		}
 	}
 
 	async editTransaction(req, res) {
