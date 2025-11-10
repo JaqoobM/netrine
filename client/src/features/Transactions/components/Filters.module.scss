@@ -47,6 +47,10 @@
 	padding: 2.5rem 2.5rem 0;
 }
 
+.monthsWrapper {
+	padding: 1rem 1rem 1rem;
+}
+
 .monthBtn {
 	display: flex;
 	justify-content: space-between;
@@ -64,23 +68,33 @@
 	display: flex;
 	align-items: center;
 	margin-top: 1rem;
+	border: 0.1rem solid #9bd4e4;
+	padding: 1rem;
+	width: 100%;
+	border-radius: 0.8rem;
+	background-color: #fff;
+	transition: border 0.1s, background-color 0.1s;
+}
+
+.checkedContainer {
+	border: 0.1rem solid #219ebc;
+	background-color: #e4f0f4;
 }
 
 .checkbox {
 	position: relative;
-	border: 0.1rem solid #000;
+	border: 0.1rem solid #323232;
 	width: 2.2rem;
 	height: 2.2rem;
 	border-radius: 0.4rem;
 	margin: 0 1rem 0 1.5rem;
 }
 
-.checked {
+.square {
 	position: absolute;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	// padding: 0.5rem;
 	height: 1.2rem;
 	width: 1.2rem;
 	border-radius: 0.2rem;
@@ -88,6 +102,12 @@
 	left: 50%;
 	background-color: #219ebc;
 	transform: translate(-50%, -50%);
+	opacity: 0;
+	transition: opacity 0.1s;
+}
+
+.checked {
+	opacity: 1;
 }
 
 .checkedIcon {
