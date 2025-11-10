@@ -9,6 +9,7 @@ import TransactionsList from './TransactionsList';
 import { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import { TransactionsContext } from '../../../layouts/AppLayout/AppLayout.jsx';
+import Filters from '../components/Filters.jsx';
 
 function Transactions() {
 	const settingsBoxRef = useRef(null);
@@ -80,6 +81,12 @@ function Transactions() {
 		}
 	};
 
+	const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+
+	const handleToggleFilters = () => {
+		setIsFiltersOpen(!isFiltersOpen);
+	};
+
 	return (
 		<>
 			{/* <Navigation /> */}
@@ -91,8 +98,8 @@ function Transactions() {
 				/>
 			)}
 			{/* TOP BAR */}
-			<TopBar />
-
+			<TopBar openFilters={handleToggleFilters} />
+			<Filters openFilters={handleToggleFilters} isOpen={isFiltersOpen} />
 			{/* BOTTOM BUTTONS */}
 			{/* <div className='transaction-btns'>
 				<button

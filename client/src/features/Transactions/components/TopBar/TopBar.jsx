@@ -4,7 +4,7 @@ import logo from '../../../../assets/img/N.png';
 import Checkbox from './Checkbox';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export default function TopBar() {
+export default function TopBar({ openFilters = () => {} }) {
 	return (
 		<>
 			<div className={styles.container}>
@@ -53,11 +53,14 @@ export default function TopBar() {
 								<p className={styles.sortText}>Sort</p>
 							</button>
 
-							<button type='button' className={styles.filterBox}>
+							<button
+								onClick={openFilters}
+								type='button'
+								className={styles.filterBox}>
 								<span className={styles.filterIcon}>
 									<FontAwesomeIcon icon='fa-solid fa-filter' />
 								</span>
-								<p className={styles.sortText}>Filter</p>
+								<span className={styles.sortText}>Filter</span>
 							</button>
 
 							<div className={styles.FilterBox}></div>

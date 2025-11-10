@@ -177,7 +177,7 @@ export default function AddTransactionModal({
 				`${baseURL || 'http://localhost:3000'}/api/transactions`,
 				editedTransaction
 			);
-			return response;
+			return response.data;
 		} catch {
 			console.log('Nie edytowano');
 		}
@@ -221,14 +221,13 @@ export default function AddTransactionModal({
 
 	const editTransaction = async () => {
 		const editedTransaction = transactionsContext.list.find(
-			(transaction) =>
-				(transaction._id || transaction.customId) === transactionId
+			(transaction) => transaction._id === transactionId
 		);
 
 		editedTransaction.name = nameInputValue;
 		editedTransaction.amount = amountInputValue;
 		editedTransaction.date = dateInputValue;
-		editedTransaction.type = type;
+		editedTransaction.type = isSwitched ? 'income' : 'cost';
 
 		const transactions = transactionsContext.list.filter(
 			(transaction) =>
@@ -237,6 +236,7 @@ export default function AddTransactionModal({
 
 		try {
 			const response = await editTransactionData(editedTransaction);
+			response.date = response.date.split('T')[0];
 			transactionsContext.transactionsUpdate([...transactions, response]);
 		} catch (error) {}
 	};
@@ -253,9 +253,12 @@ export default function AddTransactionModal({
 		} else if (modalType === 'edit/delete') {
 			try {
 				await editTransaction();
+
 				handleClear();
 				toggleModalContext();
-			} catch (error) {}
+			} catch (error) {
+				console.log(error);
+			}
 		}
 	};
 
