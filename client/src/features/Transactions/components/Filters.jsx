@@ -2,7 +2,8 @@ import styles from './Filters.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CloseButton from '../../../components/CloseButton/CloseButton';
 import Header2 from '../../../components/Header2/Header2';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import DropdownBtn from '../../../components/Dropdown/DropdownBtn';
 
 export default function Filters({ isOpen = false, openFilters = () => {} }) {
 	const [isMonthsOpen, setIsMonthsOpen] = useState(false);
@@ -21,6 +22,14 @@ export default function Filters({ isOpen = false, openFilters = () => {} }) {
 		december: false,
 	});
 
+	useEffect(() => {
+		if (isOpen) {
+			document.body.classList.add(styles.noScroll);
+		} else {
+			document.body.classList.remove(styles.noScroll);
+		}
+	}, [isOpen]);
+
 	const changeMonthCheck = (month) => {
 		setCheckedMonths((prev) => ({ ...prev, [month]: !prev[month] }));
 	};
@@ -32,41 +41,43 @@ export default function Filters({ isOpen = false, openFilters = () => {} }) {
 	return (
 		<>
 			{/* FILTERS */}
-			<div className={`${styles.container}`}>
-				<div className={`${styles.box} ${isOpen && styles.openFilters}`}>
-					<CloseButton value={openFilters} />
-					<div className={styles.title}>
-						<Header2 value='Filters' />
-					</div>
-					<button onClick={handleToggleMonths} className={styles.monthBtn}>
-						Month
-						<span className={styles.monthBtnIcon}>
-							<FontAwesomeIcon icon='fa-solid fa-chevron-right' />
+			<div className={`${styles.box} ${isOpen && styles.openFilters}`}>
+				<CloseButton value={openFilters} />
+				<span className={styles.title}>
+					<Header2 value='Filters' />
+				</span>
+				<button onClick={handleToggleMonths} className={styles.monthBtn}>
+					Month
+					<span className={styles.monthBtnIcon}>
+						<FontAwesomeIcon icon='fa-solid fa-chevron-right' />
+					</span>
+				</button>
+				<div className={styles.checkboxContainer}>
+					<button className={styles.checkbox}>
+						<span className={styles.square}>
+							<span className={styles.checkedIcon}>
+								<FontAwesomeIcon icon='fa-solid fa-check' />
+							</span>
 						</span>
 					</button>
-					<div className={styles.checkboxContainer}>
-						<button className={styles.checkbox}>
-							<span className={styles.square}>
-								<span className={styles.checkedIcon}>
-									<FontAwesomeIcon icon='fa-solid fa-check' />
-								</span>
-							</span>
-						</button>
-						<span className={styles.checkboxText}>All months</span>
-					</div>
+					<span className={styles.checkboxText}>All months</span>
 				</div>
+			</div>
 
-				{/* MONTHS */}
+			{/* MONTHS */}
 
-				<div className={`${styles.box} ${isMonthsOpen && styles.openFilters}`}>
-					<CloseButton value={openFilters} />
-					<button onClick={handleToggleMonths} className={styles.backArrow}>
-						<FontAwesomeIcon icon='fa-solid fa-reply' />
-					</button>
-					<div className={styles.title}>
-						<Header2 value='Months' />
-					</div>
-					<div className={styles.monthsWrapper}>
+			<div className={`${styles.box} ${isMonthsOpen && styles.openFilters}`}>
+				<CloseButton value={openFilters} />
+				<button onClick={handleToggleMonths} className={styles.backArrow}>
+					<FontAwesomeIcon icon='fa-solid fa-reply' />
+				</button>
+				<span className={styles.title}>
+					<Header2 value='Months' />
+				</span>
+				<div className={styles.wrapper}>
+					{/* <button className={styles.date}>11/11/2025</button> */}
+					{/* <DropdownBtn btnType={'categories'} title='Year' /> */}
+					<div className={styles.monthsContainer}>
 						<button
 							onClick={() => {
 								changeMonthCheck('january');

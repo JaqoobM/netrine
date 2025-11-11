@@ -71,7 +71,7 @@ export default function DropdownBtn({
 							</span>
 						</span>
 					) : (
-						'Select a wallet'
+						'2025'
 					)}
 					<span
 						className={`${styles.dropdownChevron} ${

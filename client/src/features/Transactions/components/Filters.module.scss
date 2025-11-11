@@ -1,15 +1,9 @@
-.container {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	left: 0;
+.noScroll {
 	overflow: hidden;
-	background-color: #ffffff9f;
 }
 
 .bg {
-	position: absolute;
+	position: fixed;
 	top: 0;
 	left: 0;
 	right: 0;
@@ -25,7 +19,7 @@
 }
 
 .box {
-	position: absolute;
+	position: fixed;
 	top: 0;
 	right: 0;
 	bottom: 0;
@@ -35,6 +29,7 @@
 	width: 22rem;
 	z-index: 100000;
 	transform: translateX(100%);
+	overflow: hidden;
 	transition: transform 0.3s, box-shadow 0.3s;
 }
 
@@ -44,11 +39,25 @@
 }
 
 .title {
-	padding: 2.5rem 2.5rem 0;
+	padding: 2.5rem 2.5rem 1.5rem;
+	box-shadow: 0px -5px 10px 0px rgb(128, 128, 128);
+	z-index: 1;
 }
 
-.monthsWrapper {
+.wrapper {
 	padding: 1rem 1rem 1rem;
+	width: 100%;
+	height: 100%;
+}
+
+.monthsContainer {
+	width: 100%;
+	height: 100%;
+	overflow-y: auto;
+}
+
+.date {
+     
 }
 
 .monthBtn {
@@ -59,7 +68,6 @@
 	border-bottom: 0.1rem solid #219ebc;
 	height: 5.2rem;
 	padding: 0 1.5rem 0;
-	// margin-top: 2rem;
 	color: #219ebc;
 	background-color: rgba(33, 157, 188, 0.1);
 }
@@ -69,7 +77,7 @@
 	align-items: center;
 	margin-top: 1rem;
 	border: 0.1rem solid #9bd4e4;
-	padding: 1rem;
+	padding: 0.7rem;
 	width: 100%;
 	border-radius: 0.8rem;
 	background-color: #fff;
@@ -87,7 +95,7 @@
 	width: 2.2rem;
 	height: 2.2rem;
 	border-radius: 0.4rem;
-	margin: 0 1rem 0 0rem;
+	margin: 0 1rem 0 0;
 }
 
 .square {
@@ -122,4 +130,5 @@
 	font-size: 2.5rem;
 	padding: 0.1rem 0.3rem 0.3rem;
 	color: #323232;
+	z-index: 2;
 }

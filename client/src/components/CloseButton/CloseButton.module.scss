@@ -11,6 +11,7 @@
 	width: 2rem;
 	height: 2rem;
 	border-radius: 50%;
+	z-index: 1000000;
 	transition: background-color 0.1s;
 
 	&:hover {
