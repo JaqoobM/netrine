@@ -2,25 +2,30 @@ import styles from './Filters.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CloseButton from '../../../components/CloseButton/CloseButton';
 import Header2 from '../../../components/Header2/Header2';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import DropdownBtn from '../../../components/Dropdown/DropdownBtn';
+import { TransactionsContext } from '../../../layouts/AppLayout/AppLayout';
 
 export default function Filters({ isOpen = false, openFilters = () => {} }) {
 	const [isMonthsOpen, setIsMonthsOpen] = useState(false);
-	const [checkedMonths, setCheckedMonths] = useState({
-		january: false,
-		february: false,
-		march: false,
-		april: false,
-		may: false,
-		june: false,
-		july: false,
-		august: false,
-		september: false,
-		october: false,
-		november: false,
-		december: false,
-	});
+	const [years, setYears] = useState([]);
+	const [months, setMonths] = useState([
+		{ month: 'all months', isChecked: false },
+		{ month: 'january', isChecked: false },
+		{ month: 'february', isChecked: false },
+		{ month: 'march', isChecked: false },
+		{ month: 'april', isChecked: false },
+		{ month: 'may', isChecked: false },
+		{ month: 'june', isChecked: false },
+		{ month: 'july', isChecked: false },
+		{ month: 'august', isChecked: false },
+		{ month: 'september', isChecked: false },
+		{ month: 'october', isChecked: false },
+		{ month: 'november', isChecked: false },
+		{ month: 'december', isChecked: false },
+	]);
+
+	const transactionsContext = use(TransactionsContext);
 
 	useEffect(() => {
 		if (isOpen) {
@@ -28,14 +33,79 @@ export default function Filters({ isOpen = false, openFilters = () => {} }) {
 		} else {
 			document.body.classList.remove(styles.noScroll);
 		}
+
+		const yearsArr = transactionsContext.list.map(
+			(transaction) => transaction.date.split('-')[0]
+		);
+
+		let newYears = [];
+
+		yearsArr.forEach((year) => {
+			if (!newYears.some((obj) => obj.year === year)) {
+				newYears = [
+					...newYears,
+					{
+						year,
+						isChecked: false,
+					},
+				];
+			}
+		});
+
+		setYears(newYears);
 	}, [isOpen]);
 
-	const changeMonthCheck = (month) => {
-		setCheckedMonths((prev) => ({ ...prev, [month]: !prev[month] }));
+	const handleChangeMonthCheck = (month) => {
+		const newMonths = [...months];
+		const monthIndex = newMonths.findIndex((obj) => obj.month === month);
+		months[monthIndex].isChecked = !months[monthIndex].isChecked;
+
+		setMonths(newMonths);
+	};
+
+	const handleChangeYearCheck = (year) => {
+		const newYears = [...years];
+		const yearIndex = newYears.findIndex((obj) => obj.year === year);
+		years[yearIndex].isChecked = !years[yearIndex].isChecked;
+
+		setYears(newYears);
 	};
 
 	const handleToggleMonths = () => {
 		setIsMonthsOpen(!isMonthsOpen);
+	};
+
+	const handleMothsContainerHeight = () => {
+		let checkedElements = 0;
+		let elements = 0;
+
+		months.forEach((obj) => {
+			if (obj.isChecked === true) {
+				checkedElements += 1;
+				elements += 1;
+			} else {
+				elements += 1;
+			}
+		});
+
+		years.forEach((obj) => {
+			if (obj.isChecked === true) {
+				checkedElements += 1;
+				elements += 1;
+			} else {
+				elements += 1;
+			}
+		});
+
+		if (isMonthsOpen) {
+			document.querySelector('#monthsContainer').style.height = `${
+				checkedElements * 4.8 + 1 + 4.8 + 2
+			}rem`;
+		} else {
+			document.querySelector('#monthsContainer').style.height = `${
+				elements * 4.8 + 1 + 4.8 + 2
+			}rem`;
+		}
 	};
 
 	return (
@@ -43,270 +113,174 @@ export default function Filters({ isOpen = false, openFilters = () => {} }) {
 			{/* FILTERS */}
 			<div className={`${styles.box} ${isOpen && styles.openFilters}`}>
 				<CloseButton value={openFilters} />
-				<span className={styles.title}>
+				<div className={styles.title}>
 					<Header2 value='Filters' />
-				</span>
-				<button onClick={handleToggleMonths} className={styles.monthBtn}>
-					Month
-					<span className={styles.monthBtnIcon}>
-						<FontAwesomeIcon icon='fa-solid fa-chevron-right' />
-					</span>
-				</button>
-				<div className={styles.checkboxContainer}>
-					<button className={styles.checkbox}>
-						<span className={styles.square}>
-							<span className={styles.checkedIcon}>
-								<FontAwesomeIcon icon='fa-solid fa-check' />
-							</span>
+				</div>
+				<div className={styles.scrollBox}>
+					<button
+						onClick={() => {
+							handleToggleMonths();
+							handleMothsContainerHeight();
+						}}
+						className={styles.monthBtn}>
+						Period
+						<span
+							className={`${styles.monthBtnIcon} ${
+								isMonthsOpen && styles.monthBtnIconActive
+							}`}>
+							<FontAwesomeIcon icon='fa-solid fa-chevron-right' />
 						</span>
 					</button>
-					<span className={styles.checkboxText}>All months</span>
-				</div>
-			</div>
-
-			{/* MONTHS */}
-
-			<div className={`${styles.box} ${isMonthsOpen && styles.openFilters}`}>
-				<CloseButton value={openFilters} />
-				<button onClick={handleToggleMonths} className={styles.backArrow}>
-					<FontAwesomeIcon icon='fa-solid fa-reply' />
-				</button>
-				<span className={styles.title}>
-					<Header2 value='Months' />
-				</span>
-				<div className={styles.wrapper}>
-					{/* <button className={styles.date}>11/11/2025</button> */}
-					{/* <DropdownBtn btnType={'categories'} title='Year' /> */}
-					<div className={styles.monthsContainer}>
+					<div
+						className={`${styles.monthsContainer} ${
+							isMonthsOpen && styles.monthsOpen
+						}`}
+						id='monthsContainer'>
+						<span
+							className={`${styles.periodTitles} ${styles.periodYearsTitle}`}>
+							Years
+						</span>
+						{years.map((obj) => {
+							return (
+								<button
+									key={obj.year}
+									onClick={() => {
+										handleChangeYearCheck(obj.year);
+									}}
+									className={`${styles.checkboxContainer} ${
+										obj.isChecked && styles.checkedContainer
+									} ${
+										!isMonthsOpen &&
+										obj.isChecked === false &&
+										styles.monthsClose
+									}`}>
+									<span className={styles.checkbox}>
+										<span
+											className={`${styles.square} ${
+												obj.isChecked && styles.checked
+											}`}>
+											<span className={styles.checkedIcon}>
+												<FontAwesomeIcon icon='fa-solid fa-check' />
+											</span>
+										</span>
+									</span>
+									<span className={styles.checkboxText}>{obj.year}</span>
+								</button>
+							);
+						})}
+						<span
+							className={`${styles.periodTitles} ${styles.periodMonthsTitle}`}>
+							Months
+						</span>
+						{months.map((obj) => {
+							return (
+								<button
+									key={obj.month}
+									onClick={() => {
+										handleChangeMonthCheck(obj.month);
+									}}
+									className={`${styles.checkboxContainer} ${
+										obj.isChecked && styles.checkedContainer
+									} ${
+										!isMonthsOpen &&
+										obj.isChecked === false &&
+										styles.monthsClose
+									}`}>
+									<span className={styles.checkbox}>
+										<span
+											className={`${styles.square} ${
+												obj.isChecked && styles.checked
+											}`}>
+											<span className={styles.checkedIcon}>
+												<FontAwesomeIcon icon='fa-solid fa-check' />
+											</span>
+										</span>
+									</span>
+									<span className={styles.checkboxText}>{obj.month}</span>
+								</button>
+							);
+						})}
+					</div>
+					<button className={styles.monthBtn}>
+						Wallets
+						<span
+							className={`${styles.monthBtnIcon} ${
+								isMonthsOpen && styles.monthBtnIconActive
+							}`}>
+							<FontAwesomeIcon icon='fa-solid fa-chevron-right' />
+						</span>
+					</button>
+					<div className={`${styles.monthsContainer}`} id='monthsContainer'>
 						<button
 							onClick={() => {
-								changeMonthCheck('january');
+								changeMonthCheck('all');
 							}}
-							className={`${styles.checkboxContainer} ${
-								checkedMonths.january && styles.checkedContainer
-							}`}>
+							className={`${styles.checkboxContainer} ${styles.checkedContainer}`}>
 							<span className={styles.checkbox}>
-								<span
-									className={`${styles.square} ${
-										checkedMonths.january && styles.checked
-									}`}>
+								<span className={`${styles.square} ${styles.checked}`}>
 									<span className={styles.checkedIcon}>
 										<FontAwesomeIcon icon='fa-solid fa-check' />
 									</span>
 								</span>
 							</span>
-							<span className={styles.checkboxText}>January</span>
-						</button>
-						<button
-							onClick={() => {
-								changeMonthCheck('february');
-							}}
-							className={`${styles.checkboxContainer} ${
-								checkedMonths.february && styles.checkedContainer
-							}`}>
-							<span className={styles.checkbox}>
-								<span
-									className={`${styles.square} ${
-										checkedMonths.february && styles.checked
-									}`}>
-									<span className={styles.checkedIcon}>
-										<FontAwesomeIcon icon='fa-solid fa-check' />
-									</span>
-								</span>
-							</span>
-							<span className={styles.checkboxText}>February</span>
-						</button>
-						<button
-							onClick={() => {
-								changeMonthCheck('march');
-							}}
-							className={`${styles.checkboxContainer} ${
-								checkedMonths.march && styles.checkedContainer
-							}`}>
-							<span className={styles.checkbox}>
-								<span
-									className={`${styles.square} ${
-										checkedMonths.march && styles.checked
-									}`}>
-									<span className={styles.checkedIcon}>
-										<FontAwesomeIcon icon='fa-solid fa-check' />
-									</span>
-								</span>
-							</span>
-							<span className={styles.checkboxText}>March</span>
-						</button>
-						<button
-							onClick={() => {
-								changeMonthCheck('april');
-							}}
-							className={`${styles.checkboxContainer} ${
-								checkedMonths.april && styles.checkedContainer
-							}`}>
-							<span className={styles.checkbox}>
-								<span
-									className={`${styles.square} ${
-										checkedMonths.april && styles.checked
-									}`}>
-									<span className={styles.checkedIcon}>
-										<FontAwesomeIcon icon='fa-solid fa-check' />
-									</span>
-								</span>
-							</span>
-							<span className={styles.checkboxText}>April</span>
-						</button>
-						<button
-							onClick={() => {
-								changeMonthCheck('may');
-							}}
-							className={`${styles.checkboxContainer} ${
-								checkedMonths.may && styles.checkedContainer
-							}`}>
-							<span className={styles.checkbox}>
-								<span
-									className={`${styles.square} ${
-										checkedMonths.may && styles.checked
-									}`}>
-									<span className={styles.checkedIcon}>
-										<FontAwesomeIcon icon='fa-solid fa-check' />
-									</span>
-								</span>
-							</span>
-							<span className={styles.checkboxText}>May</span>
-						</button>
-						<button
-							onClick={() => {
-								changeMonthCheck('june');
-							}}
-							className={`${styles.checkboxContainer} ${
-								checkedMonths.june && styles.checkedContainer
-							}`}>
-							<span className={styles.checkbox}>
-								<span
-									className={`${styles.square} ${
-										checkedMonths.june && styles.checked
-									}`}>
-									<span className={styles.checkedIcon}>
-										<FontAwesomeIcon icon='fa-solid fa-check' />
-									</span>
-								</span>
-							</span>
-							<span className={styles.checkboxText}>June</span>
-						</button>
-						<button
-							onClick={() => {
-								changeMonthCheck('july');
-							}}
-							className={`${styles.checkboxContainer} ${
-								checkedMonths.july && styles.checkedContainer
-							}`}>
-							<span className={styles.checkbox}>
-								<span
-									className={`${styles.square} ${
-										checkedMonths.july && styles.checked
-									}`}>
-									<span className={styles.checkedIcon}>
-										<FontAwesomeIcon icon='fa-solid fa-check' />
-									</span>
-								</span>
-							</span>
-							<span className={styles.checkboxText}>July</span>
-						</button>
-						<button
-							onClick={() => {
-								changeMonthCheck('august');
-							}}
-							className={`${styles.checkboxContainer} ${
-								checkedMonths.august && styles.checkedContainer
-							}`}>
-							<span className={styles.checkbox}>
-								<span
-									className={`${styles.square} ${
-										checkedMonths.august && styles.checked
-									}`}>
-									<span className={styles.checkedIcon}>
-										<FontAwesomeIcon icon='fa-solid fa-check' />
-									</span>
-								</span>
-							</span>
-							<span className={styles.checkboxText}>August</span>
-						</button>
-						<button
-							onClick={() => {
-								changeMonthCheck('september');
-							}}
-							className={`${styles.checkboxContainer} ${
-								checkedMonths.september && styles.checkedContainer
-							}`}>
-							<span className={styles.checkbox}>
-								<span
-									className={`${styles.square} ${
-										checkedMonths.september && styles.checked
-									}`}>
-									<span className={styles.checkedIcon}>
-										<FontAwesomeIcon icon='fa-solid fa-check' />
-									</span>
-								</span>
-							</span>
-							<span className={styles.checkboxText}>September</span>
-						</button>
-						<button
-							onClick={() => {
-								changeMonthCheck('october');
-							}}
-							className={`${styles.checkboxContainer} ${
-								checkedMonths.october && styles.checkedContainer
-							}`}>
-							<span className={styles.checkbox}>
-								<span
-									className={`${styles.square} ${
-										checkedMonths.october && styles.checked
-									}`}>
-									<span className={styles.checkedIcon}>
-										<FontAwesomeIcon icon='fa-solid fa-check' />
-									</span>
-								</span>
-							</span>
-							<span className={styles.checkboxText}>October</span>
-						</button>
-						<button
-							onClick={() => {
-								changeMonthCheck('november');
-							}}
-							className={`${styles.checkboxContainer} ${
-								checkedMonths.november && styles.checkedContainer
-							}`}>
-							<span className={styles.checkbox}>
-								<span
-									className={`${styles.square} ${
-										checkedMonths.november && styles.checked
-									}`}>
-									<span className={styles.checkedIcon}>
-										<FontAwesomeIcon icon='fa-solid fa-check' />
-									</span>
-								</span>
-							</span>
-							<span className={styles.checkboxText}>November</span>
-						</button>
-						<button
-							onClick={() => {
-								changeMonthCheck('december');
-							}}
-							className={`${styles.checkboxContainer} ${
-								checkedMonths.december && styles.checkedContainer
-							}`}>
-							<span className={styles.checkbox}>
-								<span
-									className={`${styles.square} ${
-										checkedMonths.december && styles.checked
-									}`}>
-									<span className={styles.checkedIcon}>
-										<FontAwesomeIcon icon='fa-solid fa-check' />
-									</span>
-								</span>
-							</span>
-							<span className={styles.checkboxText}>December</span>
+							<span className={styles.checkboxText}>Main wallet</span>
 						</button>
 					</div>
+					<button className={styles.monthBtn}>
+						Categories
+						<span
+							className={`${styles.monthBtnIcon} ${
+								isMonthsOpen && styles.monthBtnIconActive
+							}`}>
+							<FontAwesomeIcon icon='fa-solid fa-chevron-right' />
+						</span>
+					</button>
+					<div className={`${styles.monthsContainer}`} id='monthsContainer'>
+						<button
+							onClick={() => {
+								changeMonthCheck('all');
+							}}
+							className={`${styles.checkboxContainer} ${styles.checkedContainer}`}>
+							<span className={styles.checkbox}>
+								<span className={`${styles.square} ${styles.checked}`}>
+									<span className={styles.checkedIcon}>
+										<FontAwesomeIcon icon='fa-solid fa-check' />
+									</span>
+								</span>
+							</span>
+							<span className={styles.checkboxText}>All categories</span>
+						</button>
+					</div>
+					<button className={`${styles.monthBtn} ${styles.tags}`}>
+						Tags
+						<span
+							className={`${styles.monthBtnIcon} ${
+								isMonthsOpen && styles.monthBtnIconActive
+							}`}>
+							<FontAwesomeIcon icon='fa-solid fa-chevron-right' />
+						</span>
+					</button>
+					<div className={`${styles.monthsContainer}`} id='monthsContainer'>
+						<button
+							onClick={() => {
+								changeMonthCheck('all');
+							}}
+							className={`${styles.checkboxContainer} ${styles.checkedContainer}`}>
+							<span className={styles.checkbox}>
+								<span className={`${styles.square} ${styles.checked}`}>
+									<span className={styles.checkedIcon}>
+										<FontAwesomeIcon icon='fa-solid fa-check' />
+									</span>
+								</span>
+							</span>
+							<span className={styles.checkboxText}>All tags</span>
+						</button>
+					</div>
+				</div>
+				<div className={styles.bottomBar}>
+					<button className={styles.saveBtn} disabled>
+						Save
+					</button>
 				</div>
 			</div>
 
