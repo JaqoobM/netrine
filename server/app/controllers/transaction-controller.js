@@ -2,6 +2,23 @@ import Transaction from '../db/models/transaction.js';
 import mongoose from 'mongoose';
 
 class TransactionControler {
+	async getYears(req, res) {
+		try {
+			const result = await Transaction.aggregate([
+				{ $project: { year: { $year: '$date' } } },
+			]);
+
+			let years = [];
+
+			result.forEach((obj) => {
+				if (!years.includes(obj.year)) {
+					years.push(obj.year);
+				}
+			});
+			res.json(years);
+		} catch (error) {}
+	}
+
 	async createTransaction(req, res) {
 		const transaction = new Transaction({
 			name: req.body.name,
@@ -21,10 +38,42 @@ class TransactionControler {
 
 	async showTransactions(req, res) {
 		try {
-			const transactions = await Transaction.find({}).sort({ date: -1 });
-			res.json(transactions);
+			const { month, year } = req.query || {};
+
+			let years = [];
+			let months = [];
+
+			if (year) {
+				years = year.split(',').map(Number);
+			}
+
+			if (month) {
+				months = month.split(',').map(Number);
+			}   
+
+			let dates = [];
+ 
+			years.forEach((year) => {
+				months.forEach((month) => {
+					const startDate = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0, 0));
+					const endDate = new Date(Date.UTC(year, month, 0, 0, 0, 0, 0));
+
+					dates.push({
+						date: {
+							$gte: startDate,
+							$lte: endDate,
+						},
+					});
+				});
+			});
+			console.log(dates);
+			const transactions = await Transaction.find({
+				$or: dates,
+			}).sort({ date: -1 });
+
+			return res.status(200).json(transactions);
 		} catch (error) {
-			console.log('error');
+			console.log('error:');
 		}
 	}
 

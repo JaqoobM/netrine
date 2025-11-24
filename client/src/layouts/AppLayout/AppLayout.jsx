@@ -3,19 +3,25 @@ import TransactionModal from '../../components/TransactionModal/TransactionModal
 import { Outlet } from 'react-router';
 import { useState, createContext, useContext, useEffect } from 'react';
 import Toast from '../../components/Toast/Toast';
+import { faVolumeHigh } from '@fortawesome/free-solid-svg-icons';
 
 export const ToggleModalContext = createContext(null);
 export const TransactionsContext = createContext(null);
 
 export default function Applayout() {
 	const baseURL = import.meta.env.VITE_API_URL;
-	
+
 	const [transactions, setTransactions] = useState([]);
+	const [filteredTransactions, setFilteredTransactions] = useState([]);
 	const [transactionId, setTransactionId] = useState('');
 	const [modalType, setModalType] = useState('');
 
 	const transactionsUpdate = (transactionsList) => {
 		setTransactions(transactionsList);
+	};
+
+	const filteredTransactionsUpdate = (filteredTransactions) => {
+		setFilteredTransactions(filteredTransactions);
 	};
 
 	const addNewTransaction = (newTransaction) => {
@@ -44,6 +50,8 @@ export default function Applayout() {
 						addNewTransaction,
 						list: transactions,
 						transactionsUpdate,
+						filteredList: filteredTransactions,
+						filteredTransactionsUpdate,
 					}}>
 					<TransactionModal
 						isModalOpen={isModalOpen}

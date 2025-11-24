@@ -3,77 +3,76 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CloseButton from '../../../components/CloseButton/CloseButton';
 import Header2 from '../../../components/Header2/Header2';
 import { useEffect, useState, use } from 'react';
-import DropdownBtn from '../../../components/Dropdown/DropdownBtn';
 import { TransactionsContext } from '../../../layouts/AppLayout/AppLayout';
 
-export default function Filters({ isOpen = false, openFilters = () => {} }) {
+export default function Filters({
+	isOpen = false,
+	openFilters = () => {},
+	fetchTransactions = () => {},
+	allYears = [],
+	getYearsFromApi = () => {},
+}) {
 	const [isMonthsOpen, setIsMonthsOpen] = useState(false);
 	const [years, setYears] = useState([]);
 	const [months, setMonths] = useState([
-		{ month: 'all months', isChecked: false },
-		{ month: 'january', isChecked: false },
-		{ month: 'february', isChecked: false },
-		{ month: 'march', isChecked: false },
-		{ month: 'april', isChecked: false },
-		{ month: 'may', isChecked: false },
-		{ month: 'june', isChecked: false },
-		{ month: 'july', isChecked: false },
-		{ month: 'august', isChecked: false },
-		{ month: 'september', isChecked: false },
-		{ month: 'october', isChecked: false },
-		{ month: 'november', isChecked: false },
-		{ month: 'december', isChecked: false },
+		{ month: 'all months', monthNumber: 0, isChecked: false },
+		{ month: 'january', monthNumber: 1, isChecked: false },
+		{ month: 'february', monthNumber: 2, isChecked: false },
+		{ month: 'march', monthNumber: 3, isChecked: false },
+		{ month: 'april', monthNumber: 4, isChecked: false },
+		{ month: 'may', monthNumber: 5, isChecked: false },
+		{ month: 'june', monthNumber: 6, isChecked: false },
+		{ month: 'july', monthNumber: 7, isChecked: false },
+		{ month: 'august', monthNumber: 8, isChecked: false },
+		{ month: 'september', monthNumber: 9, isChecked: false },
+		{ month: 'october', monthNumber: 10, isChecked: false },
+		{ month: 'november', monthNumber: 11, isChecked: false },
+		{ month: 'december', monthNumber: 12, isChecked: false },
 	]);
 
 	const transactionsContext = use(TransactionsContext);
+	const date = new Date();
+	const actualYear = date.getFullYear();
+	const actualMonth = date.getMonth() + 1;
 
 	useEffect(() => {
-		if (isOpen) {
-			document.body.classList.add(styles.noScroll);
-		} else {
-			document.body.classList.remove(styles.noScroll);
+		const checkedYears = years
+			.filter((obj) => obj.isChecked === true)
+			.map((obj) => obj.year);
+
+		const checkedMonths = months
+			.filter((obj) => obj.isChecked === true)
+			.map((obj) => obj.monthNumber);
+
+		if (checkedYears.length > 0 && checkedMonths.length > 0) {
+			fetchTransactions(checkedYears, checkedMonths);
+			// getYearsFromApi();
 		}
+	}, [months, years]);
 
-		const yearsArr = transactionsContext.list.map(
-			(transaction) => transaction.date.split('-')[0]
-		);
+	useEffect(() => {
+		const getYears = () => {
+			let newYears = [
+				{
+					year: actualYear,
+					isChecked: true,
+				},
+			];
 
-		let newYears = [];
-
-		yearsArr.forEach((year) => {
-			if (!newYears.some((obj) => obj.year === year)) {
-				newYears = [
-					...newYears,
-					{
+			allYears.forEach((year) => {
+				if (!newYears.some((obj) => obj.year === year)) {
+					newYears.push({
 						year,
 						isChecked: false,
-					},
-				];
-			}
-		});
+					});
+				}
+			});
 
-		setYears(newYears);
-	}, [isOpen]);
+			setYears(newYears);
+		};
 
-	const handleChangeMonthCheck = (month) => {
-		const newMonths = [...months];
-		const monthIndex = newMonths.findIndex((obj) => obj.month === month);
-		months[monthIndex].isChecked = !months[monthIndex].isChecked;
-
-		setMonths(newMonths);
-	};
-
-	const handleChangeYearCheck = (year) => {
-		const newYears = [...years];
-		const yearIndex = newYears.findIndex((obj) => obj.year === year);
-		years[yearIndex].isChecked = !years[yearIndex].isChecked;
-
-		setYears(newYears);
-	};
-
-	const handleToggleMonths = () => {
-		setIsMonthsOpen(!isMonthsOpen);
-	};
+		getYears();
+	}, [allYears]);
 
 	const handleMothsContainerHeight = () => {
 		let checkedElements = 0;
@@ -88,6 +87,8 @@ export default function Filters({ isOpen = false, openFilters = () => {} }) {
 			}
 		});
 
+		// const yearsArr = getYears();
+
 		years.forEach((obj) => {
 			if (obj.isChecked === true) {
 				checkedElements += 1;
@@ -97,7 +98,7 @@ export default function Filters({ isOpen = false, openFilters = () => {} }) {
 			}
 		});
 
-		if (isMonthsOpen) {
+		if (isMonthsOpen && isOpen) {
 			document.querySelector('#monthsContainer').style.height = `${
 				checkedElements * 4.8 + 1 + 4.8 + 2
 			}rem`;
@@ -106,6 +107,52 @@ export default function Filters({ isOpen = false, openFilters = () => {} }) {
 				elements * 4.8 + 1 + 4.8 + 2
 			}rem`;
 		}
+	};
+
+	const handleToggleMonths = () => {
+		setIsMonthsOpen(!isMonthsOpen);
+	};
+
+	useEffect(() => {
+		if (isOpen) {
+			document.body.classList.add(styles.noScroll);
+		} else {
+			document.body.classList.remove(styles.noScroll);
+		}
+
+		handleMothsContainerHeight();
+
+		if (isOpen) {
+			setIsMonthsOpen(false);
+		}
+
+		if (isOpen) {
+			document.querySelector(`.${styles.scrollBox}`).scrollTop = 0;
+		}
+	}, [isOpen]);
+
+	useEffect(() => {
+		setMonths((prev) =>
+			prev.map((obj, i) =>
+				i === actualMonth ? { ...obj, isChecked: true } : obj
+			)
+		);
+	}, []);
+
+	const handleChangeMonthCheck = (month) => {
+		setMonths((prev) =>
+			prev.map((obj) =>
+				obj.month === month ? { ...obj, isChecked: !obj.isChecked } : obj
+			)
+		);
+	};
+
+	const handleChangeYearCheck = (year) => {
+		setYears((prev) =>
+			prev.map((obj) =>
+				obj.year === year ? { ...obj, isChecked: !obj.isChecked } : obj
+			)
+		);
 	};
 
 	return (
@@ -128,7 +175,7 @@ export default function Filters({ isOpen = false, openFilters = () => {} }) {
 							className={`${styles.monthBtnIcon} ${
 								isMonthsOpen && styles.monthBtnIconActive
 							}`}>
-							<FontAwesomeIcon icon='fa-solid fa-chevron-right' />
+							<FontAwesomeIcon icon='fa-solid fa-chevron-up' />
 						</span>
 					</button>
 					<div
@@ -207,7 +254,7 @@ export default function Filters({ isOpen = false, openFilters = () => {} }) {
 							className={`${styles.monthBtnIcon} ${
 								isMonthsOpen && styles.monthBtnIconActive
 							}`}>
-							<FontAwesomeIcon icon='fa-solid fa-chevron-right' />
+							<FontAwesomeIcon icon='fa-solid fa-chevron-up' />
 						</span>
 					</button>
 					<div className={`${styles.monthsContainer}`} id='monthsContainer'>
@@ -232,7 +279,7 @@ export default function Filters({ isOpen = false, openFilters = () => {} }) {
 							className={`${styles.monthBtnIcon} ${
 								isMonthsOpen && styles.monthBtnIconActive
 							}`}>
-							<FontAwesomeIcon icon='fa-solid fa-chevron-right' />
+							<FontAwesomeIcon icon='fa-solid fa-chevron-up' />
 						</span>
 					</button>
 					<div className={`${styles.monthsContainer}`} id='monthsContainer'>
@@ -257,7 +304,7 @@ export default function Filters({ isOpen = false, openFilters = () => {} }) {
 							className={`${styles.monthBtnIcon} ${
 								isMonthsOpen && styles.monthBtnIconActive
 							}`}>
-							<FontAwesomeIcon icon='fa-solid fa-chevron-right' />
+							<FontAwesomeIcon icon='fa-solid fa-chevron-up' />
 						</span>
 					</button>
 					<div className={`${styles.monthsContainer}`} id='monthsContainer'>

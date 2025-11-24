@@ -2,9 +2,6 @@ import styles from './Transactions.module.scss';
 import TopBar from '../components/TopBar/TopBar.jsx';
 import './Transactions.scss';
 import { React, use } from 'react';
-// import FiltersMobile from '../../../components/FiltersMobile/FiltersMobile.jsx';
-// import AddTransactionModal from '../../../components/TransactionModal/TransactionModal.jsx';
-// import CategoryModal from '../../../components/Categories/Categories.jsx';
 import TransactionsList from './TransactionsList';
 import { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
@@ -13,26 +10,45 @@ import Filters from '../components/Filters.jsx';
 
 function Transactions() {
 	const settingsBoxRef = useRef(null);
-	// const [ModalIsOpen, setModalIsOpen] = useState(false);
 	const [transactions, setTransactions] = useState([]);
-	// const [addModalIsOpen, setAddModalIsOpen] = useState(false);
 	const [categoryModalIsOpen, setCategoryModalIsOpen] = useState(false);
 	const [categoryList, setCategoryList] = useState([]);
-	// const [editedTransaction, setEditedTransaction] = useState([]);
+	const [allYears, setAllYears] = useState([]);
 	const transactionsContext = use(TransactionsContext);
 
 	const baseURL = import.meta.env.VITE_API_URL;
 
-	const getTransactionsFromApi = async () => {
+	const getTransactionsFromApi = async (years, months) => {
 		try {
 			const response = await axios.get(
-				`${baseURL || 'http://localhost:3000'}/api/transactions`
+				`${
+					baseURL || 'http://localhost:3000'
+				}/api/transactions?year=${years}&month=${months}`
 			);
+
 			return response;
 		} catch (error) {
 			throw new Error('Failed to load transactions. Please try again later');
 		}
 	};
+
+	useEffect(() => {
+		const getYearsFromApi = async () => {
+			const response = await axios.get(
+				`${baseURL || 'http://localhost:3000'}/api/years`
+			);
+			setAllYears(response.data);
+		};
+		getYearsFromApi();
+	}, [transactionsContext.filte]);
+
+	// const getYearsFromApi = async () => {
+	// 	const response = await axios.get(
+	// 		`${baseURL || 'http://localhost:3000'}/api/years`
+	// 	);
+	// 	setAllYears(response.data);
+	// };
+	// // getYearsFromApi();
 
 	const parseTransactions = (response) => {
 		return response.data.map((transaction) => ({
@@ -41,20 +57,16 @@ function Transactions() {
 			amount: transaction.amount,
 			date: transaction.date?.split('T')[0],
 			type: transaction.type,
-			customId: transaction.customId,
 		}));
 	};
 
-	useEffect(() => {
-		const fetchTransactions = async () => {
-			try {
-				const response = await getTransactionsFromApi();
-				const parsedTransactions = parseTransactions(response);
-				transactionsContext.transactionsUpdate(parsedTransactions);
-			} catch (error) {}
-		};
-		fetchTransactions();
-	}, []);
+	const fetchTransactions = async (years, months) => {
+		try {
+			const response = await getTransactionsFromApi(years, months);
+			const parsedTransactions = parseTransactions(response);
+			transactionsContext.filteredTransactionsUpdate(parsedTransactions);
+		} catch (error) {}
+	};
 
 	const categoryModalHandler = () => {
 		setCategoryModalIsOpen(!categoryModalIsOpen);
@@ -90,6 +102,7 @@ function Transactions() {
 	return (
 		<>
 			{/* <Navigation /> */}
+
 			{categoryModalIsOpen && (
 				<CategoryModal
 					categoryModalHandler={categoryModalHandler}
@@ -97,38 +110,17 @@ function Transactions() {
 					categoryList={categoryList}
 				/>
 			)}
+
 			{/* TOP BAR */}
 			<TopBar openFilters={handleToggleFilters} />
-			<Filters openFilters={handleToggleFilters} isOpen={isFiltersOpen} />
-			{/* BOTTOM BUTTONS */}
-			{/* <div className='transaction-btns'>
-				<button
-					className='transaction-btns__btn transaction-btns__plan-btn'
-					type='button'>
-					<div className='transaction-btns__text-box'>
-						<span className='transaction-btns__text'>Transakcje</span>
-						<span className='transaction-btns__text'>zaplanowane</span>
-					</div>
-					<span className='transaction-btns__icon'>
-						<FontAwesomeIcon icon={faCalendar} />
-					</span>
-				</button>
-				<button
-					className='transaction-btns__btn transaction-btns__add-btn'
-					type='button'
-					onClick={() => {
-						modalHandler('addBtn');
-					}}>
-					<div className='transaction-btns__text-box'>
-						<span className='transaction-btns__text'>Dodaj</span>
-						<span className='transaction-btns__text'>transakcję</span>
-					</div>
-					<span className='transaction-btns__icon'>
-						<FontAwesomeIcon icon={faPlus} />
-					</span>
-				</button>
-			</div> */}
-			{/* <FiltersMobile /> */}
+
+			<Filters
+				openFilters={handleToggleFilters}
+				isOpen={isFiltersOpen}
+				fetchTransactions={fetchTransactions}
+				allYears={allYears}
+				// getYearsFromApi={getYearsFromApi}
+			/>
 
 			{/* TRANSACTIONS */}
 			<TransactionsList
@@ -136,6 +128,7 @@ function Transactions() {
 				transactionsList={transactions}
 				modalHandler={modalHandler}
 			/>
+
 			<div className='page-bg'></div>
 		</>
 	);

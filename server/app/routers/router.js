@@ -7,8 +7,10 @@ router
 	.post(transactionControler.createTransaction)
 	.get(transactionControler.showTransactions)
 	.put(transactionControler.editTransaction);
-	
+
 router
 	.route('/api/transactions/:id')
 	.delete(transactionControler.deleteTransaction);
+
+router.get('/api/years', transactionControler.getYears);
 export default router;

@@ -37,14 +37,14 @@ export default function TransactionsList() {
 			const dates = [];
 			const amountSum = {};
 
-			transactionsContext.list.forEach((transaction) => {
+			transactionsContext.filteredList.forEach((transaction) => {
 				if (!dates.includes(transaction.date)) {
 					dates.push(transaction.date);
 				}
 			});
 
 			dates.forEach((date) => {
-				const newDate = transactionsContext.list.filter(
+				const newDate = transactionsContext.filteredList.filter(
 					(transaction) => transaction.date === date
 				);
 
@@ -71,14 +71,14 @@ export default function TransactionsList() {
 			const months = [];
 			const monthlyTotal = {};
 
-			transactionsContext.list.forEach((transaction) => {
+			transactionsContext.filteredList.forEach((transaction) => {
 				if (!months.includes(transaction.date.split('-')[1])) {
 					months.push(transaction.date.split('-')[1]);
 				}
 			});
 
 			months.forEach((month) => {
-				const newDate = transactionsContext.list.filter(
+				const newDate = transactionsContext.filteredList.filter(
 					(transaction) => transaction.date.split('-')[1] === month
 				);
 
@@ -103,8 +103,8 @@ export default function TransactionsList() {
 
 		monthBalanceCalculation();
 		dayBalanceCalculation();
-		sortTransactionsHandler(transactionsContext.list, 'newest');
-	}, [transactionsContext.list]);
+		sortTransactionsHandler(transactionsContext.filteredList, 'newest');
+	}, [transactionsContext.filteredList]);
 
 	return (
 		<div className={styles.transactions}>
@@ -167,7 +167,7 @@ export default function TransactionsList() {
 				}
 
 				return (
-					<React.Fragment key={transaction._id || transaction.customId}>
+					<React.Fragment key={transaction._id}>
 						{transaction === transactions[0] || isDifferent ? (
 							<>
 								{isNewMonth && (
@@ -244,7 +244,7 @@ export default function TransactionsList() {
 									className={`${styles.transaction} ${
 										isFirst ? styles.transactionFirstBorder : ''
 									}`}
-									id={transaction._id || transaction.customId}>
+									id={transaction._id}>
 									<span className={styles.iconBg}>
 										<span className={styles.icon}>
 											<FontAwesomeIcon icon={faCartShopping} />
@@ -273,7 +273,7 @@ export default function TransactionsList() {
 								className={`${styles.transaction} ${
 									isBetween ? styles.transactionBetweenBorder : ''
 								} ${isLast ? styles.transactionLastBorder : ''}`}
-								id={transaction._id || transaction.customId}>
+								id={transaction._id}>
 								<span className={styles.iconBg}>
 									<span className={styles.icon}>
 										<FontAwesomeIcon icon={faCartShopping} />
