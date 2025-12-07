@@ -12,7 +12,14 @@ export default function Filters({
 	allYears = [],
 	getYearsFromApi = () => {},
 }) {
+	const transactionsContext = use(TransactionsContext);
+	const date = new Date();
+	const actualYear = date.getFullYear();
+	const actualMonth = date.getMonth() + 1;
+
 	const [isMonthsOpen, setIsMonthsOpen] = useState(false);
+
+	const [oldYears, setOldYears] = useState([]);
 	const [years, setYears] = useState([]);
 	const [months, setMonths] = useState([
 		{ month: 'all months', monthNumber: 0, isChecked: false },
@@ -30,11 +37,6 @@ export default function Filters({
 		{ month: 'december', monthNumber: 12, isChecked: false },
 	]);
 
-	const transactionsContext = use(TransactionsContext);
-	const date = new Date();
-	const actualYear = date.getFullYear();
-	const actualMonth = date.getMonth() + 1;
-
 	useEffect(() => {
 		const checkedYears = years
 			.filter((obj) => obj.isChecked === true)
@@ -44,10 +46,18 @@ export default function Filters({
 			.filter((obj) => obj.isChecked === true)
 			.map((obj) => obj.monthNumber);
 
-		if (checkedYears.length > 0 && checkedMonths.length > 0) {
-			fetchTransactions(checkedYears, checkedMonths);
-			// getYearsFromApi();
-		}
+		// if (
+		// 	(checkedYears.includes(actualYear) && checkedYears.length > 1) ||
+		// 	(checkedMonths.includes(actualMonth) && checkedMonths.length > 1)
+		// ) {
+		// 	transactionsContext.changePeriod(checkedYears, checkedMonths);
+		// } else if (
+		// 	(!checkedYears.includes(actualYear) && checkedYears.length >= 1) ||
+		// 	(!checkedMonths.includes(actualMonth) && checkedMonths.length >= 1)
+		// ) {
+		// 	transactionsContext.changePeriod(checkedYears, checkedMonths);
+		// }
+		transactionsContext.changePeriod(checkedYears, checkedMonths);
 	}, [months, years]);
 
 	useEffect(() => {
@@ -70,7 +80,6 @@ export default function Filters({
 
 			setYears(newYears);
 		};
-
 		getYears();
 	}, [allYears]);
 
@@ -86,8 +95,6 @@ export default function Filters({
 				elements += 1;
 			}
 		});
-
-		// const yearsArr = getYears();
 
 		years.forEach((obj) => {
 			if (obj.isChecked === true) {
@@ -140,6 +147,10 @@ export default function Filters({
 	}, []);
 
 	const handleChangeMonthCheck = (month) => {
+		const newMonths = months.map((obj) =>
+			obj.month === month ? { ...obj, isChecked: !obj.isChecked } : obj
+		);
+		console.log(newMonths);
 		setMonths((prev) =>
 			prev.map((obj) =>
 				obj.month === month ? { ...obj, isChecked: !obj.isChecked } : obj

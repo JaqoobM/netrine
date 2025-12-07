@@ -18,20 +18,6 @@ function Transactions() {
 
 	const baseURL = import.meta.env.VITE_API_URL;
 
-	const getTransactionsFromApi = async (years, months) => {
-		try {
-			const response = await axios.get(
-				`${
-					baseURL || 'http://localhost:3000'
-				}/api/transactions?year=${years}&month=${months}`
-			);
-
-			return response;
-		} catch (error) {
-			throw new Error('Failed to load transactions. Please try again later');
-		}
-	};
-
 	useEffect(() => {
 		const getYearsFromApi = async () => {
 			const response = await axios.get(
@@ -49,24 +35,6 @@ function Transactions() {
 	// 	setAllYears(response.data);
 	// };
 	// // getYearsFromApi();
-
-	const parseTransactions = (response) => {
-		return response.data.map((transaction) => ({
-			_id: transaction._id,
-			name: transaction.name,
-			amount: transaction.amount,
-			date: transaction.date?.split('T')[0],
-			type: transaction.type,
-		}));
-	};
-
-	const fetchTransactions = async (years, months) => {
-		try {
-			const response = await getTransactionsFromApi(years, months);
-			const parsedTransactions = parseTransactions(response);
-			transactionsContext.filteredTransactionsUpdate(parsedTransactions);
-		} catch (error) {}
-	};
 
 	const categoryModalHandler = () => {
 		setCategoryModalIsOpen(!categoryModalIsOpen);
@@ -99,6 +67,30 @@ function Transactions() {
 		setIsFiltersOpen(!isFiltersOpen);
 	};
 
+	const [balance, setBalance] = useState({
+		cost: 0,
+		income: 0,
+		result: 0,
+	});
+
+	useEffect(() => {
+		const allBalanceCalculation = () => {
+			let cost = 0;
+			let income = 0;
+
+			transactionsContext.filteredList.forEach((transaction) => {
+				if (transaction.type === 'cost') {
+					cost += Number(transaction.amount);
+				} else {
+					income += Number(transaction.amount);
+				}
+			});
+			setBalance((prev) => ({ ...prev, cost, income, result: income - cost }));
+		};
+
+		allBalanceCalculation();
+	}, [transactionsContext.filteredList]);
+
 	return (
 		<>
 			{/* <Navigation /> */}
@@ -112,12 +104,12 @@ function Transactions() {
 			)}
 
 			{/* TOP BAR */}
-			<TopBar openFilters={handleToggleFilters} />
+			<TopBar openFilters={handleToggleFilters} balance={balance} />
 
 			<Filters
 				openFilters={handleToggleFilters}
 				isOpen={isFiltersOpen}
-				fetchTransactions={fetchTransactions}
+				// fetchTransactions={fetchTransactions}
 				allYears={allYears}
 				// getYearsFromApi={getYearsFromApi}
 			/>

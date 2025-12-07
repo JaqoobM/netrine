@@ -4,7 +4,7 @@ import logo from '../../../../assets/img/N.png';
 import Checkbox from './Checkbox';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export default function TopBar({ openFilters = () => {} }) {
+export default function TopBar({ openFilters = () => {}, balance = {} }) {
 	return (
 		<>
 			<div className={styles.container}>
@@ -20,14 +20,14 @@ export default function TopBar({ openFilters = () => {} }) {
 									<FontAwesomeIcon icon='fa-solid fa-caret-up' />
 								</span>
 								<p className={styles.currency}>$</p>
-								<p className={styles.statsAmount}>5000</p>
+								<p className={styles.statsAmount}>{balance.income}</p>
 							</div>
 							<div className={styles.statBox}>
 								<span className={`${styles.icons} ${styles.icon2}`}>
 									<FontAwesomeIcon icon='fa-solid fa-caret-down' />
 								</span>
 								<p className={styles.currency}>$</p>
-								<p className={styles.statsAmount}>1430</p>
+								<p className={styles.statsAmount}>{balance.cost}</p>
 							</div>
 							<div className={styles.statBox}>
 								<span className={`${styles.icons} ${styles.icon3}`}>
@@ -35,7 +35,7 @@ export default function TopBar({ openFilters = () => {} }) {
 								</span>
 								<p className={styles.currency}>$</p>
 								<p className={`${styles.statsAmount} ${styles.bilans}`}>
-									+3570
+									{balance.result}
 								</p>
 							</div>
 						</div>

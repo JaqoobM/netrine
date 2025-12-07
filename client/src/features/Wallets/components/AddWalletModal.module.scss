@@ -1,0 +1,73 @@
+// @use '../../assets/styles/colors';
+
+.modalBox {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	z-index: 10000000;
+	visibility: hidden;
+	opacity: 0;
+	backdrop-filter: blur(1rem);
+	background-color: rgba(33, 157, 188, 0.103);
+	transition: opacity 0.3s, visibility 0s 0.3s;
+}
+
+.modalBoxOpen {
+	visibility: visible;
+	opacity: 1;
+	transition: opacity 0.3s, visibility 0s;
+}
+
+.modalContainer {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	background-color: #fff;
+	z-index: 100000;
+	padding: 2.5rem;
+	box-shadow: 0px 0px 20px -10px rgb(128, 128, 128);
+	overflow-x: hidden;
+	opacity: 0;
+	transform: translateY(100%);
+	transition: opacity 0.3s, transform 0.3s;
+}
+
+.modalOpen {
+	opacity: 1;
+	transform: translateY(0);
+	transition: opacity 0.3s, transform 0.3s;
+}
+
+.form {
+	width: 100%;
+}
+
+@media (min-width: 768px) {
+	.modalsContainer {
+		margin-top: 0;
+		width: 43rem;
+	}
+
+	.modalContainer {
+		width: 43rem;
+		height: 61.7rem;
+		border-radius: 1.5rem;
+		bottom: 50%;
+		left: 50%;
+		transform: translate(-50%, 200%);
+		margin-top: none;
+	}
+
+	.modalOpen {
+		transform: translate(-50%, 50%);
+	}
+}

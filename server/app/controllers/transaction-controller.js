@@ -32,6 +32,7 @@ class TransactionControler {
 			await transaction.save();
 			res.status(201).json(transaction);
 		} catch (e) {
+			res.sendStatus(500)
 			console.log(e, 'Nie zapisano transakcji');
 		}
 	}
@@ -42,17 +43,17 @@ class TransactionControler {
 
 			let years = [];
 			let months = [];
-
+	
 			if (year) {
 				years = year.split(',').map(Number);
 			}
 
 			if (month) {
 				months = month.split(',').map(Number);
-			}   
+			}
 
 			let dates = [];
- 
+
 			years.forEach((year) => {
 				months.forEach((month) => {
 					const startDate = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0, 0));
@@ -66,7 +67,7 @@ class TransactionControler {
 					});
 				});
 			});
-			console.log(dates);
+
 			const transactions = await Transaction.find({
 				$or: dates,
 			}).sort({ date: -1 });
@@ -90,23 +91,25 @@ class TransactionControler {
 
 		try {
 			await transaction.save();
-			res.status(200).send('Zapisano edycje');
+			res.status(200).json(transaction);
 		} catch (e) {
+			res.sendStatus(500)
 			console.log('Nie zapisano edycji');
 		}
 	}
 
 	async deleteTransaction(req, res) {
 		const { id } = req.params;
-
 		try {
-			if (mongoose.isValidObjectId(id)) {
-				await Transaction.deleteOne({ _id: id });
+			const response = await Transaction.deleteOne({ _id: id });
+
+			if (response.deletedCount === 1) {
+				res.sendStatus(201);
 			} else {
-				await Transaction.deleteOne({ customId: id });
+				res.status(404).json({ message: 'Transaction not found' });
 			}
-			res.status(200).send('Usunięto transakcję');
 		} catch (e) {
+			res.sendStatus(500);
 			console.log(e, 'Nie usunięto transakcji');
 		}
 	}

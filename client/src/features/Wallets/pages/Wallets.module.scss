@@ -1,0 +1,125 @@
+.pageBg {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(33, 158, 188, 0.05);
+	z-index: -2;
+}
+
+.wrapper {
+	padding: 0 1.5rem 0;
+}
+
+.container {
+	position: relative;
+	margin-top: 2rem;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	background-color: #fff;
+	box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.1);
+	border-radius: 0.8rem;
+	padding: 1rem;
+}
+
+.nameContainer {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	border-bottom: 0.1rem solid #323232;
+	font-size: 2rem;
+	padding-bottom: 1rem;
+	padding-right: 4rem;
+}
+
+.settingsIcon {
+	position: absolute;
+	top: 0;
+	right: 0;
+	background-color: #023047;
+	color: #fff;
+	border-bottom-left-radius: 0.4rem;
+	border-top-right-radius: 0.4rem;
+	padding: 0.6rem 1rem 0.6rem;
+}
+
+.balanceBox {
+	position: relative;
+	margin-top: 1rem;
+	background-color: #e6f4f8;
+	background-color: #f5f5f5;
+	width: 100%;
+	display: flex;
+	justify-content: end;
+	padding: 1rem 1rem 1rem 1rem;
+	border-radius: 0.4rem;
+}
+
+.statsContainer {
+	margin-top: 1rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+}
+
+.incomeBox {
+	position: relative;
+	display: flex;
+	justify-content: end;
+	background-color: #eaffe5;
+	background-color: #f5f5f5;
+	padding: 1rem 1rem 1rem 3rem;
+	border-top-left-radius: 0.4rem;
+	border-bottom-left-radius: 0.4rem;
+	border-radius: 0.4rem;
+	width: 100%;
+}
+
+.costBox {
+	position: relative;
+	display: flex;
+	justify-content: end;
+	background-color: #ffeaea;
+	background-color: #f5f5f5;
+	padding: 1rem 1rem 1rem 3rem;
+	border-top-right-radius: 0.4rem;
+	border-bottom-right-radius: 0.4rem;
+	border-radius: 0.4rem;
+	width: 100%;
+	margin-left: 1rem;
+}
+
+.incomeIcon {
+	position: absolute;
+	left: 1rem;
+	color: #00bb13;
+}
+
+.costIcon {
+	position: absolute;
+	left: 1rem;
+	color: #ff1f1f;
+}
+
+.balanceIcon {
+	position: absolute;
+	left: 1rem;
+	color: #219ebc;
+}
+
+.addBtn {
+	position: fixed;
+	right: 1.5rem;
+	left: 1.5rem;
+	bottom: 7.5rem;
+	padding: 1.2rem;
+	background-color: #023047;
+	box-shadow: 0 0 1rem 0 rgba(2, 48,71, 0.1);
+	color: #fff;
+	border-radius: 0.8rem;
+}
