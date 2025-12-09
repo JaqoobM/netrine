@@ -7,26 +7,27 @@ import { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import { TransactionsContext } from '../../../layouts/AppLayout/AppLayout.jsx';
 import Filters from '../components/Filters.jsx';
+import { faKitchenSet } from '@fortawesome/free-solid-svg-icons';
 
 function Transactions() {
 	const settingsBoxRef = useRef(null);
 	const [transactions, setTransactions] = useState([]);
 	const [categoryModalIsOpen, setCategoryModalIsOpen] = useState(false);
 	const [categoryList, setCategoryList] = useState([]);
-	const [allYears, setAllYears] = useState([]);
+	// const [allYears, setAllYears] = useState([]);
 	const transactionsContext = use(TransactionsContext);
 
 	const baseURL = import.meta.env.VITE_API_URL;
 
-	useEffect(() => {
-		const getYearsFromApi = async () => {
-			const response = await axios.get(
-				`${baseURL || 'http://localhost:3000'}/api/years`
-			);
-			setAllYears(response.data);
-		};
-		getYearsFromApi();
-	}, [transactionsContext.filte]);
+	// useEffect(() => {
+	// 	const getYearsFromApi = async () => {
+	// 		const response = await axios.get(
+	// 			`${baseURL || 'http://localhost:3000'}/api/years`
+	// 		);
+	// 		setAllYears(response.data);
+	// 	};
+	// 	getYearsFromApi();
+	// }, [transactionsContext.filte]);
 
 	// const getYearsFromApi = async () => {
 	// 	const response = await axios.get(
@@ -110,7 +111,7 @@ function Transactions() {
 				openFilters={handleToggleFilters}
 				isOpen={isFiltersOpen}
 				// fetchTransactions={fetchTransactions}
-				allYears={allYears}
+				// allYears={allYears}
 				// getYearsFromApi={getYearsFromApi}
 			/>
 

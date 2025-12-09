@@ -17,8 +17,9 @@ export default function Applayout() {
 	const actualYear = date.getFullYear();
 	const actualMonth = date.getMonth() + 1;
 
-	const [years, setYears] = useState([actualYear]);
-	const [months, setMonths] = useState([actualMonth]);
+	const [allYears, setAllYears] = useState([]);
+	const [selectedYears, setYears] = useState([actualYear]);
+	const [selectedMonths, setMonths] = useState([actualMonth]);
 
 	const [transactions, setTransactions] = useState([]);
 	const [filteredTransactions, setFilteredTransactions] = useState([]);
@@ -51,11 +52,54 @@ export default function Applayout() {
 		setFilteredTransactions((prev) => [...prev, newTransaction]);
 	};
 
-	const changePeriod = (years, months) => {
-		setYears(years);
-		setMonths(months);
+	const changePeriod = ({
+		checkedYears = selectedYears || [actualYear],
+		checkedMonths = selectedMonths || [actualMonth],
+	}) => {
+		const selectedMonthsResult = selectedMonths?.reduce((a, b) => a + b, 0);
+		const checkedMonthsResult = checkedMonths.reduce((a, b) => a + b, 0);
+
+		if (
+			selectedMonthsResult != checkedMonthsResult &&
+			checkedYears?.length > 0 &&
+			checkedMonths?.length > 0
+		) {
+			console.log(checkedYears);
+			setMonths(checkedMonths);
+		}
+
+		const selectedYearsResult = selectedYears?.reduce((a, b) => a + b, 0);
+		const checkedYearsResult = checkedYears.reduce((a, b) => a + b, 0);
+
+		if (
+			selectedYearsResult != checkedYearsResult &&
+			checkedMonths?.length > 0 &&
+			checkedYears?.length > 0
+		) {
+			setYears(checkedYears);
+		}
+
+		// console.log(selectedMonthsResult + checkedMonthsResult);
+		// console.log(selectedYearsResult + checkedYearsResult);
+		// console.log(selectedYears);
 	};
-	
+
+	useEffect(() => {
+		const getYearsFromApi = async () => {
+			try {
+				const response = await axios.get(
+					`${baseURL || 'http://localhost:3000'}/api/years`
+				);
+
+				if (response.status === 200) {
+					setAllYears(response.data);
+					return true;
+				}
+			} catch (error) {}
+		};
+		getYearsFromApi();
+	}, []);
+
 	const parseTransactions = (response) => {
 		return response.data.map((transaction) => ({
 			_id: transaction._id,
@@ -67,11 +111,12 @@ export default function Applayout() {
 	};
 
 	const getTransactionsFromApi = async () => {
+		console.log('fetch');
 		try {
 			const response = await axios.get(
 				`${
 					baseURL || 'http://localhost:3000'
-				}/api/transactions?year=${years}&month=${months}`
+				}/api/transactions?year=${selectedYears}&month=${selectedMonths}`
 			);
 
 			return response;
@@ -89,7 +134,7 @@ export default function Applayout() {
 			} catch (error) {}
 		};
 		fetchTransactions();
-	}, [months, years]);
+	}, [selectedMonths, selectedYears]);
 
 	const addTransactionData = async (newTransaction) => {
 		try {
@@ -110,6 +155,11 @@ export default function Applayout() {
 		try {
 			const response = await addTransactionData(newTransaction);
 			response.date = response.date.split('T')[0];
+
+			if (!allYears.includes(response.date.split('-')[0])) {
+				setAllYears((prev) => [...prev, response.date.split('-')[0]]);
+			}
+
 			addNewTransaction(response);
 		} catch (error) {
 			handleShowToast('error', error.message);
@@ -132,7 +182,6 @@ export default function Applayout() {
 				return true;
 			}
 		} catch (error) {
-			console.log(error.response);
 			if (error.response.status === 404) {
 				throw new Error(
 					'We couldn’t find this transaction. It may have been removed already'
@@ -229,6 +278,7 @@ export default function Applayout() {
 							filteredList: filteredTransactions,
 							filteredTransactionsUpdate,
 							changePeriod,
+							allYears,
 						}}>
 						<TransactionModal
 							isModalOpen={isModalOpen}

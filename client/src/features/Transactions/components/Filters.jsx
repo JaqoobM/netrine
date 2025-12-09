@@ -5,13 +5,7 @@ import Header2 from '../../../components/Header2/Header2';
 import { useEffect, useState, use } from 'react';
 import { TransactionsContext } from '../../../layouts/AppLayout/AppLayout';
 
-export default function Filters({
-	isOpen = false,
-	openFilters = () => {},
-	fetchTransactions = () => {},
-	allYears = [],
-	getYearsFromApi = () => {},
-}) {
+export default function Filters({ isOpen = false, openFilters = () => {} }) {
 	const transactionsContext = use(TransactionsContext);
 	const date = new Date();
 	const actualYear = date.getFullYear();
@@ -19,7 +13,6 @@ export default function Filters({
 
 	const [isMonthsOpen, setIsMonthsOpen] = useState(false);
 
-	const [oldYears, setOldYears] = useState([]);
 	const [years, setYears] = useState([]);
 	const [months, setMonths] = useState([
 		{ month: 'all months', monthNumber: 0, isChecked: false },
@@ -36,54 +29,76 @@ export default function Filters({
 		{ month: 'november', monthNumber: 11, isChecked: false },
 		{ month: 'december', monthNumber: 12, isChecked: false },
 	]);
+	// To do useEffect i warunek, że mają być obje rzeczy przed wysłaniem
+	// const changePeriod = ({ years = [], months = [] }) => {
+	// 	let checkedYears = [];
+	// 	let checkedMonths = [];
+
+	// 	if (years.length > 0) {
+	// 		checkedYears = years
+	// 			.filter((obj) => obj.isChecked === true)
+	// 			.map((obj) => obj.year);
+
+	// 		transactionsContext.changePeriod({ checkedYears });
+	// 	}
+
+	// 	if (months.length > 0) {
+	// 		checkedMonths = months
+	// 			.filter((obj) => obj.isChecked === true)
+	// 			.map((obj) => obj.monthNumber);
+
+	// 		transactionsContext.changePeriod({ checkedMonths });
+	// 	}
+	// };
 
 	useEffect(() => {
-		const checkedYears = years
+		let checkedYears = [];
+		let checkedMonths = [];
+
+		checkedYears = years
 			.filter((obj) => obj.isChecked === true)
 			.map((obj) => obj.year);
 
-		const checkedMonths = months
+		checkedMonths = months
 			.filter((obj) => obj.isChecked === true)
 			.map((obj) => obj.monthNumber);
 
-		// if (
-		// 	(checkedYears.includes(actualYear) && checkedYears.length > 1) ||
-		// 	(checkedMonths.includes(actualMonth) && checkedMonths.length > 1)
-		// ) {
-		// 	transactionsContext.changePeriod(checkedYears, checkedMonths);
-		// } else if (
-		// 	(!checkedYears.includes(actualYear) && checkedYears.length >= 1) ||
-		// 	(!checkedMonths.includes(actualMonth) && checkedMonths.length >= 1)
-		// ) {
-		// 	transactionsContext.changePeriod(checkedYears, checkedMonths);
-		// }
-		transactionsContext.changePeriod(checkedYears, checkedMonths);
-	}, [months, years]);
+		if (checkedMonths.length > 0 && checkedYears > 0) {
+			transactionsContext.changePeriod({ checkedYears, checkedMonths });
+		}
+	}, [years, months]);
 
-	useEffect(() => {
-		const getYears = () => {
-			let newYears = [
-				{
-					year: actualYear,
-					isChecked: true,
-				},
-			];
+	const changeYears = () => {
+		let newYears = [];
+		const index = transactionsContext.allYears.length - 1;
+		const yearsArr = years.map((obj) => obj.year);
 
-			allYears.forEach((year) => {
-				if (!newYears.some((obj) => obj.year === year)) {
-					newYears.push({
-						year,
-						isChecked: false,
-					});
-				}
-			});
-
-			setYears(newYears);
+		const compare = (a, b) => {
+			return Number(b.year) - Number(a.year);
 		};
-		getYears();
-	}, [allYears]);
 
-	const handleMothsContainerHeight = () => {
+		if (years.length === 0 || !years.some((obj) => obj.isChecked === true)) {
+			newYears = transactionsContext.allYears.map((year) => ({
+				year,
+				isChecked: year === actualYear ? true : false,
+			}));
+		} else if (!yearsArr.includes(transactionsContext.allYears[index])) {
+			const newYear = {
+				year: transactionsContext.allYears[index],
+				isChecked: false,
+			};
+
+			newYears = [...years];
+			newYears.push(newYear);
+		}
+
+		if (newYears.length > 0) {
+			newYears.sort(compare);
+			setYears(newYears);
+		}
+	};
+
+	const monthsContainerHeightCalculation = () => {
 		let checkedElements = 0;
 		let elements = 0;
 
@@ -120,14 +135,36 @@ export default function Filters({
 		setIsMonthsOpen(!isMonthsOpen);
 	};
 
-	useEffect(() => {
+	const changeYearToCurrent = () => {
+		
+	};
+
+	const changeMonthToCurrent = () => {
+		if (!months.some((obj) => obj.isChecked === true) && isOpen) {
+			setMonths((prev) =>
+				prev.map((obj, i) =>
+					i === actualMonth ? { ...obj, isChecked: true } : obj
+				)
+			);
+		} else if (!isOpen) {
+			const newMonths = months.map((obj, i) =>
+				i === actualMonth ? { ...obj, isChecked: true } : obj
+			);
+
+			setMonths(newMonths);
+		}
+	};
+
+	const bodyScroll = () => {
 		if (isOpen) {
 			document.body.classList.add(styles.noScroll);
 		} else {
 			document.body.classList.remove(styles.noScroll);
 		}
+	};
 
-		handleMothsContainerHeight();
+	const toggleMonths = () => {
+		monthsContainerHeightCalculation();
 
 		if (isOpen) {
 			setIsMonthsOpen(false);
@@ -136,34 +173,33 @@ export default function Filters({
 		if (isOpen) {
 			document.querySelector(`.${styles.scrollBox}`).scrollTop = 0;
 		}
-	}, [isOpen]);
+	};
 
 	useEffect(() => {
-		setMonths((prev) =>
-			prev.map((obj, i) =>
-				i === actualMonth ? { ...obj, isChecked: true } : obj
-			)
-		);
-	}, []);
+		changeYears();
+	}, [transactionsContext.allYears]);
+
+	useEffect(() => {
+		toggleMonths();
+		changeMonthToCurrent();
+		changeYears();
+		bodyScroll();
+	}, [isOpen]);
 
 	const handleChangeMonthCheck = (month) => {
 		const newMonths = months.map((obj) =>
 			obj.month === month ? { ...obj, isChecked: !obj.isChecked } : obj
 		);
-		console.log(newMonths);
-		setMonths((prev) =>
-			prev.map((obj) =>
-				obj.month === month ? { ...obj, isChecked: !obj.isChecked } : obj
-			)
-		);
+
+		setMonths(newMonths);
 	};
 
 	const handleChangeYearCheck = (year) => {
-		setYears((prev) =>
-			prev.map((obj) =>
-				obj.year === year ? { ...obj, isChecked: !obj.isChecked } : obj
-			)
+		const newYears = years.map((obj) =>
+			obj.year === year ? { ...obj, isChecked: !obj.isChecked } : obj
 		);
+
+		setYears(newYears);
 	};
 
 	return (
@@ -178,7 +214,7 @@ export default function Filters({
 					<button
 						onClick={() => {
 							handleToggleMonths();
-							handleMothsContainerHeight();
+							monthsContainerHeightCalculation();
 						}}
 						className={styles.monthBtn}>
 						Period

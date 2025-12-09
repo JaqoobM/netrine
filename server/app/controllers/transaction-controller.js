@@ -15,8 +15,10 @@ class TransactionControler {
 					years.push(obj.year);
 				}
 			});
-			res.json(years);
-		} catch (error) {}
+			res.status(200).json(years);
+		} catch (error) {
+			res.sendStatus(500);
+		}
 	}
 
 	async createTransaction(req, res) {
@@ -32,7 +34,7 @@ class TransactionControler {
 			await transaction.save();
 			res.status(201).json(transaction);
 		} catch (e) {
-			res.sendStatus(500)
+			res.sendStatus(500);
 			console.log(e, 'Nie zapisano transakcji');
 		}
 	}
@@ -43,7 +45,7 @@ class TransactionControler {
 
 			let years = [];
 			let months = [];
-	
+
 			if (year) {
 				years = year.split(',').map(Number);
 			}
@@ -93,7 +95,7 @@ class TransactionControler {
 			await transaction.save();
 			res.status(200).json(transaction);
 		} catch (e) {
-			res.sendStatus(500)
+			res.sendStatus(500);
 			console.log('Nie zapisano edycji');
 		}
 	}
