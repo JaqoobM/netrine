@@ -4,10 +4,24 @@ import CloseButton from '../../../components/CloseButton/CloseButton';
 import Header2 from '../../../components/Header2/Header2';
 import Input from '../../../components/Input/Input';
 import SubmitButton from '../../../components/SubmitButton/SubmitButton';
+import { useEffect } from 'react';
 
-export default function AddWallet({ modalType, isModalOpen, toggleModal }) {
+export default function AddWallet({
+	modalType,
+	isModalOpen,
+	toggleModal,
+	onSubmit = () => {},
+	nameValue = '',
+	balanceValue = '',
+	id = '',
+	del = () => {},
+}) {
 	const [nameInputValue, setNameInputValue] = useState('');
 	const [amountInputValue, setAmountInputValue] = useState('');
+	const [errorText, setErrorText] = useState({
+		name: '',
+		balance: '',
+	});
 
 	const handleNameInputValue = (value) => {
 		setNameInputValue(value);
@@ -17,12 +31,51 @@ export default function AddWallet({ modalType, isModalOpen, toggleModal }) {
 		setAmountInputValue(value);
 	};
 
+	useEffect(() => {
+		handleNameInputValue(nameValue);
+		handleAmountInputValue(balanceValue);
+	}, [nameValue, balanceValue]);
+
 	const handleClear = () => {
 		setNameInputValue('');
 		setAmountInputValue('');
+		setErrorText({ name: '', balance: '' });
 	};
 
-	const handleSubmit = () => {};
+	const handleSubmit = (e) => {
+		e.preventDefault();
+
+		let nameValue = false;
+		let amountValue = false;
+
+		if (nameInputValue) {
+			nameValue = true;
+		} else {
+			setErrorText((prev) => ({ ...prev, nameValue: 'Please enter the name' }));
+		}
+
+		if (amountInputValue) {
+			amountValue = true;
+		} else {
+			setErrorText((prev) => ({
+				...prev,
+				amountValue: 'Please enter the balance',
+			}));
+		}
+
+		if (nameValue && amountValue && !id) {
+			onSubmit({
+				name: nameInputValue,
+				balance: amountInputValue,
+			});
+		} else {
+			onSubmit({
+				name: nameInputValue,
+				balance: amountInputValue,
+				id,
+			});
+		}
+	};
 
 	return (
 		<div className={`${styles.modalBox} ${isModalOpen && styles.modalBoxOpen}`}>
@@ -39,7 +92,6 @@ export default function AddWallet({ modalType, isModalOpen, toggleModal }) {
 				/>
 
 				<form onSubmit={handleSubmit} className={styles.form}>
-
 					{/* INPUT NAME */}
 					<Input
 						label={'Name'}
@@ -47,21 +99,23 @@ export default function AddWallet({ modalType, isModalOpen, toggleModal }) {
 						inputValue={nameInputValue}
 						onChange={handleNameInputValue}
 						idValue={'name'}
+						errorText={errorText.nameValue}
 					/>
 
 					{/* INPUT AMOUNT */}
 					<Input
-						label={'Amount'}
+						label={'Balance'}
 						type={'number'}
 						inputValue={amountInputValue}
 						onChange={handleAmountInputValue}
-						idValue={'amount'}
+						idValue={'balance'}
+						errorText={errorText.amountValue}
 					/>
 
 					{modalType === 'add' && (
 						<SubmitButton
 							id='addBtn'
-							value='Add transaction'
+							value='Add wallet'
 							buttonType='add'
 							btnType='submit'
 						/>
@@ -70,7 +124,7 @@ export default function AddWallet({ modalType, isModalOpen, toggleModal }) {
 					{modalType === 'edit/delete' && (
 						<SubmitButton
 							id='editBtn'
-							value='Edit transaction'
+							value='Edit wallet'
 							buttonType='add'
 							btnType='submit'
 						/>
@@ -79,10 +133,12 @@ export default function AddWallet({ modalType, isModalOpen, toggleModal }) {
 					{modalType === 'edit/delete' && (
 						<SubmitButton
 							id='deleteBtn'
-							value='Delete transaction'
+							value='Delete wallet'
 							buttonType='delete'
 							btnType='button'
-							// onClick={deleteTransaction}
+							onClick={() => {
+								del(id);
+							}}
 						/>
 					)}
 				</form>

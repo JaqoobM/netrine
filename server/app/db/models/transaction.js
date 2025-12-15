@@ -6,15 +6,15 @@ const transactionSchema = new Schema({
 		type: String,
 	},
 	amount: {
-		type: String,
+		type: Number,
 	},
 	date: {
 		type: Date,
 	},
-	customId: {
+	type: {
 		type: String,
 	},
-	type: {
+	walletId: {
 		type: String,
 	},
 });

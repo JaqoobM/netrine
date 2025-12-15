@@ -2,13 +2,21 @@ import NavMobile from '../../components/NavMobile/NavMobile';
 import TransactionModal from '../../components/TransactionModal/TransactionModal';
 import Toast from '../../components/Toast/Toast';
 import { Outlet } from 'react-router';
-import { useState, createContext, useContext, useEffect } from 'react';
+import {
+	useState,
+	createContext,
+	useContext,
+	useEffect,
+	useMemo,
+	useCallback,
+} from 'react';
 import { faVolumeHigh } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
 export const ToggleModalContext = createContext(null);
 export const TransactionsContext = createContext(null);
 export const ToastContext = createContext(null);
+export const WalletContext = createContext(null);
 
 export default function Applayout() {
 	const baseURL = import.meta.env.VITE_API_URL;
@@ -30,10 +38,13 @@ export default function Applayout() {
 	const [succesToastText, setSuccesToastText] = useState(false);
 	const [toastType, setToastType] = useState('success');
 
+	const [wallets, setWallets] = useState([]);
+	const [walletBalance, setWalletBalance] = useState({});
+
 	const handleShowToast = (type = 'success', text = 'Success!') => {
+		setIsSuccessToastActive(true);
 		setToastType(type);
 		setSuccesToastText(text);
-		setIsSuccessToastActive(true);
 
 		setTimeout(() => {
 			setIsSuccessToastActive(false);
@@ -64,7 +75,6 @@ export default function Applayout() {
 			checkedYears?.length > 0 &&
 			checkedMonths?.length > 0
 		) {
-			console.log(checkedYears);
 			setMonths(checkedMonths);
 		}
 
@@ -78,48 +88,27 @@ export default function Applayout() {
 		) {
 			setYears(checkedYears);
 		}
-
-		// console.log(selectedMonthsResult + checkedMonthsResult);
-		// console.log(selectedYearsResult + checkedYearsResult);
-		// console.log(selectedYears);
 	};
 
-	useEffect(() => {
-		const getYearsFromApi = async () => {
-			try {
-				const response = await axios.get(
-					`${baseURL || 'http://localhost:3000'}/api/years`
-				);
-
-				if (response.status === 200) {
-					setAllYears(response.data);
-					return true;
-				}
-			} catch (error) {}
-		};
-		getYearsFromApi();
-	}, []);
-
 	const parseTransactions = (response) => {
-		return response.data.map((transaction) => ({
+		return response.map((transaction) => ({
 			_id: transaction._id,
 			name: transaction.name,
 			amount: transaction.amount,
 			date: transaction.date?.split('T')[0],
 			type: transaction.type,
+			walletId: transaction.walletId,
 		}));
 	};
 
 	const getTransactionsFromApi = async () => {
-		console.log('fetch');
 		try {
 			const response = await axios.get(
 				`${
 					baseURL || 'http://localhost:3000'
 				}/api/transactions?year=${selectedYears}&month=${selectedMonths}`
 			);
-
-			return response;
+			return response.data;
 		} catch (error) {
 			throw new Error('Failed to load transactions. Please try again later');
 		}
@@ -129,7 +118,12 @@ export default function Applayout() {
 		const fetchTransactions = async () => {
 			try {
 				const response = await getTransactionsFromApi();
-				const parsedTransactions = parseTransactions(response);
+
+				const transactions = response.transactions;
+				const years = response.years;
+				const parsedTransactions = parseTransactions(transactions);
+				setWalletBalance(response.walletsBallances);
+				setAllYears(years);
 				filteredTransactionsUpdate(parsedTransactions);
 			} catch (error) {}
 		};
@@ -216,6 +210,7 @@ export default function Applayout() {
 		amountValue = '',
 		dateValue = '',
 		type = 'cost',
+		walletId = '',
 	}) => {
 		let editedTransaction = filteredTransactions.find(
 			(transaction) => transaction._id === transactionId
@@ -227,6 +222,7 @@ export default function Applayout() {
 		editedTransaction.amount = amountValue;
 		editedTransaction.date = dateValue;
 		editedTransaction.type = type;
+		editedTransaction.walletId = walletId;
 
 		try {
 			const response = await editTransactionData(editedTransaction);
@@ -245,6 +241,84 @@ export default function Applayout() {
 		}
 	};
 
+	// WALLETS
+	const addWallets = (newWallet) => {
+		setWallets((prev) => [...prev, ...newWallet]);
+	};
+
+	const editWallets = (editedWallet) => {
+		const newWallets = wallets.filter(
+			(wallet) => wallet._id != editedWallet._id
+		);
+
+		newWallets.push(editedWallet);
+
+		setWallets(newWallets);
+	};
+
+	// const parseWallets = (wallets) => {
+	// 	const newWallets = wallets.map((wallet) => {
+	// 		return {
+	// 			...wallet,
+	// 			name: wallet.name,
+	// 			balance: wallet.balance,
+	// 			cost: walletsBallances[wallet._id]?.cost
+	// 				? walletsBallances[wallet._id]?.cost
+	// 				: 0,
+	// 			income: walletsBallances[wallet._id]?.income
+	// 				? walletsBallances[wallet._id]?.income
+	// 				: 0,
+	// 		};
+	// 	});
+	// 	setWallets(newWallets);
+	// };
+
+	const fetchWalletsData = async () => {
+		try {
+			const response = await axios.get(
+				`${baseURL || 'http://localhost:3000'}/api/wallets`
+			);
+
+			if (response.status === 200) {
+				setWallets(response.data);
+			}
+		} catch (error) {}
+	};
+
+	const createWalletData = async (newWallet) => {
+		try {
+			const response = await axios.post(
+				`${baseURL || 'http://localhost:3000'}/api/wallets`,
+				newWallet
+			);
+
+			if (response.status === 201) {
+				return response.data;
+			} else {
+				return false;
+			}
+		} catch (error) {}
+	};
+
+	const editWalletData = async (editedWallet) => {
+		try {
+			const response = await axios.put(
+				`${baseURL || 'http://localhost:3000'}/api/wallets`,
+				editedWallet
+			);
+
+			if (response.status === 200) {
+				return response.data;
+			} else {
+				return false;
+			}
+		} catch (error) {}
+	};
+
+	useEffect(() => {
+		fetchWalletsData();
+	}, []);
+
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const handleToggleModal = (id = null) => {
@@ -256,6 +330,27 @@ export default function Applayout() {
 			setTransactionId(id);
 			setModalType('edit/delete');
 		}
+	};
+
+	const deleteWalletData = async (id) => {
+		try {
+			const response = await axios.delete(
+				`${baseURL || 'http://localhost:3000'}/api/wallets/` + id
+			);
+
+			if (response.status === 200) {
+				return response.data;
+			} else {
+				return false;
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const deleteWallet = (id) => {
+		const newWallets = wallets.filter((wallet) => wallet._id != id);
+		setWallets(newWallets);
 	};
 
 	return (
@@ -280,19 +375,31 @@ export default function Applayout() {
 							changePeriod,
 							allYears,
 						}}>
-						<TransactionModal
-							isModalOpen={isModalOpen}
-							transactionId={transactionId}
-							modalType={modalType}
-							createTransaction={createTransaction}
-							editTransaction={editTransaction}
-							deleteTransactionData={deleteTransactionData}
-						/>
+						<WalletContext
+							value={{
+								create: createWalletData,
+								add: addWallets,
+								editData: editWalletData,
+								edit: editWallets,
+								delData: deleteWalletData,
+								del: deleteWallet,
+								wallets,
+								walletBalance,
+							}}>
+							<TransactionModal
+								isModalOpen={isModalOpen}
+								transactionId={transactionId}
+								modalType={modalType}
+								createTransaction={createTransaction}
+								editTransaction={editTransaction}
+								deleteTransactionData={deleteTransactionData}
+							/>
 
-						<main>
-							<Outlet />
-						</main>
-						<NavMobile toggleModal={handleToggleModal} />
+							<main>
+								<Outlet />
+							</main>
+							<NavMobile toggleModal={handleToggleModal} />
+						</WalletContext>
 					</TransactionsContext>
 				</ToggleModalContext>
 			</ToastContext>

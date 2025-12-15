@@ -4,6 +4,7 @@ import Email from '../../../components/Email/Email';
 import Password from '../../../components/Password/Password';
 import RepeatPassword from '../../../components/RepeatPassword/RepeatPassword';
 import { useState } from 'react';
+import axios from 'axios';
 
 export default function RegisterPage() {
 	const [isSubmit, setIsSubmit] = useState(false);
@@ -23,6 +24,8 @@ export default function RegisterPage() {
 		isPasswordUppercase: false,
 		isPasswordLength: false,
 	});
+
+	const createUserData = async (user) => {};
 
 	const sendData = () => {
 		if (email && password && repeatPassword) {

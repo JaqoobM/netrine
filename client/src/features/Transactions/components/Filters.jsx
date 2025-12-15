@@ -29,27 +29,6 @@ export default function Filters({ isOpen = false, openFilters = () => {} }) {
 		{ month: 'november', monthNumber: 11, isChecked: false },
 		{ month: 'december', monthNumber: 12, isChecked: false },
 	]);
-	// To do useEffect i warunek, że mają być obje rzeczy przed wysłaniem
-	// const changePeriod = ({ years = [], months = [] }) => {
-	// 	let checkedYears = [];
-	// 	let checkedMonths = [];
-
-	// 	if (years.length > 0) {
-	// 		checkedYears = years
-	// 			.filter((obj) => obj.isChecked === true)
-	// 			.map((obj) => obj.year);
-
-	// 		transactionsContext.changePeriod({ checkedYears });
-	// 	}
-
-	// 	if (months.length > 0) {
-	// 		checkedMonths = months
-	// 			.filter((obj) => obj.isChecked === true)
-	// 			.map((obj) => obj.monthNumber);
-
-	// 		transactionsContext.changePeriod({ checkedMonths });
-	// 	}
-	// };
 
 	useEffect(() => {
 		let checkedYears = [];
@@ -135,10 +114,6 @@ export default function Filters({ isOpen = false, openFilters = () => {} }) {
 		setIsMonthsOpen(!isMonthsOpen);
 	};
 
-	const changeYearToCurrent = () => {
-		
-	};
-
 	const changeMonthToCurrent = () => {
 		if (!months.some((obj) => obj.isChecked === true) && isOpen) {
 			setMonths((prev) =>
@@ -184,6 +159,7 @@ export default function Filters({ isOpen = false, openFilters = () => {} }) {
 		changeMonthToCurrent();
 		changeYears();
 		bodyScroll();
+		// changeYearToCurrent()
 	}, [isOpen]);
 
 	const handleChangeMonthCheck = (month) => {

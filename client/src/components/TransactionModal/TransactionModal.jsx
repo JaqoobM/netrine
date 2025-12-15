@@ -8,11 +8,14 @@ import {
 	ToastContext,
 	ToggleModalContext,
 	TransactionsContext,
+	WalletContext,
 } from '../../layouts/AppLayout/AppLayout';
 import CloseButton from '../CloseButton/CloseButton';
 import SubmitButton from '../SubmitButton/SubmitButton';
 import Header2 from '../Header2/Header2';
 import AddCategoryModal from './AddCategoryModal.jsx';
+import SelectBtn from '../Buttons/SelectBtn.jsx';
+import BottomSheet from '../BottomSheet/BottomSheet.jsx';
 
 export const NameContext = createContext(null);
 
@@ -37,17 +40,18 @@ export default function AddTransactionModal({
 
 	const actualDate = `${year}-${month}-${day}`;
 
-	// WALLETS
-
 	const [isSwitched, setIsSwitched] = useState(false);
 	const [nameInputValue, setNameInputValue] = useState('');
 	const [amountInputValue, setAmountInputValue] = useState('');
 	const [dateInputValue, setDateInputValue] = useState(actualDate);
+	const [selectedWallet, setSelectedWallet] = useState({});
+	const [isWalletBottomSheetOpen, setIsWalletBottomSheetOpen] = useState(false);
+
+	const walletContext = use(WalletContext);
 
 	useEffect(() => {
 		const transaction = transactionsContext.filteredList.find(
-			(transaction) =>
-				(transaction._id || transaction.customId) === transactionId
+			(transaction) => transaction._id === transactionId
 		);
 
 		if (transaction && transaction?.type === 'income') {
@@ -55,13 +59,23 @@ export default function AddTransactionModal({
 			setNameInputValue(transaction?.name);
 			setAmountInputValue(transaction?.amount);
 			setDateInputValue(transaction?.date);
+
+			const wallet = walletContext.wallets.find(
+				(wallet) => wallet._id === transaction?.walletId
+			);
+			setSelectedWallet(wallet);
 		} else if (transaction && transaction?.type === 'cost') {
 			setIsSwitched(false);
 			setNameInputValue(transaction?.name);
 			setAmountInputValue(transaction?.amount);
 			setDateInputValue(transaction?.date);
+
+			const wallet = walletContext.wallets.find(
+				(wallet) => wallet._id === transaction?.walletId
+			);
+			setSelectedWallet(wallet);
 		}
-	}, [isModalOpen]);
+	}, [isModalOpen, walletContext.wallets]);
 
 	const handleNameInputValue = (value) => {
 		setNameInputValue(value);
@@ -95,8 +109,9 @@ export default function AddTransactionModal({
 	const deleteTransaction = async () => {
 		try {
 			const success = await deleteTransactionData();
-
+			console.log(success);
 			if (success) {
+				toastContext.showSuccessToast('success', 'Deleted transaction!');
 				handleClear();
 				toggleModalContext();
 			}
@@ -105,6 +120,29 @@ export default function AddTransactionModal({
 		}
 	};
 
+	const handleWalletBottomSheet = () => {
+		setIsWalletBottomSheetOpen(!isWalletBottomSheetOpen);
+	};
+
+	const defaultOptions = () => {
+		const defaultWallet = walletContext.wallets[0];
+		setSelectedWallet(defaultWallet);
+	};
+
+	const handleSelectWallet = (wallet = {}) => {
+		setSelectedWallet(wallet);
+		setIsWalletBottomSheetOpen(false);
+	};
+
+	useEffect(() => {
+		if (
+			Object.keys(selectedWallet).length === 0 &&
+			walletContext.wallets.length > 0
+		) {
+			defaultOptions();
+		}
+	}, [walletContext.wallets]);
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
@@ -112,9 +150,10 @@ export default function AddTransactionModal({
 			try {
 				const newTransaction = {
 					name: nameInputValue,
-					amount: amountInputValue,
+					amount: Number(amountInputValue),
 					date: dateInputValue,
 					type: isSwitched ? 'income' : 'cost',
+					walletId: selectedWallet._id,
 				};
 
 				await createTransaction(newTransaction);
@@ -133,6 +172,7 @@ export default function AddTransactionModal({
 					amountValue: amountInputValue,
 					dateValue: dateInputValue,
 					type: isSwitched ? 'income' : 'cost',
+					walletId: selectedWallet._id,
 				});
 
 				toastContext.showSuccessToast('success', 'Transaction edited!');
@@ -145,132 +185,146 @@ export default function AddTransactionModal({
 	};
 
 	return (
-		<div className={`${styles.modalBox} ${isModalOpen && styles.modalBoxOpen}`}>
+		<>
+			<BottomSheet
+				isOpen={isWalletBottomSheetOpen}
+				toggle={handleWalletBottomSheet}
+				selectedItem={selectedWallet}
+				onClick={handleSelectWallet}
+			/>
 			<div
-				className={`${styles.modalContainer} ${
-					isModalOpen && styles.modalOpen
-				}`}>
-				<CloseButton
-					value={use(ToggleModalContext)}
-					handleClear={handleClear}
-				/>
-				<form onSubmit={handleSubmit} className={styles.form}>
-					<Header2
-						value={
-							modalType === 'add'
-								? 'Create new transaction'
-								: 'Edit or delete transaction'
-						}
+				className={`${styles.modalBox} ${isModalOpen && styles.modalBoxOpen}`}>
+				<div
+					className={`${styles.modalContainer} ${
+						isModalOpen && styles.modalOpen
+					}`}>
+					<CloseButton
+						value={use(ToggleModalContext)}
+						handleClear={handleClear}
 					/>
+					<form onSubmit={handleSubmit} className={styles.form}>
+						<Header2
+							value={
+								modalType === 'add'
+									? 'Create new transaction'
+									: 'Edit or delete transaction'
+							}
+						/>
 
-					<div className={styles.switchContainer}>
-						<button
-							type='button'
-							onClick={() => setIsSwitched(false)}
-							className={`${styles.switchBoxes} ${styles.switchRedBox}`}>
-							COST
-						</button>
+						<div className={styles.switchContainer}>
+							<button
+								type='button'
+								onClick={() => setIsSwitched(false)}
+								className={`${styles.switchBoxes} ${styles.switchRedBox}`}>
+								COST
+							</button>
 
-						<button
-							type='button'
-							onClick={() => setIsSwitched(true)}
-							className={`${styles.switchBoxes} ${styles.switchGreenBox}`}>
-							INCOME
-						</button>
+							<button
+								type='button'
+								onClick={() => setIsSwitched(true)}
+								className={`${styles.switchBoxes} ${styles.switchGreenBox}`}>
+								INCOME
+							</button>
 
-						<div className={styles.switchBoxContainer}>
-							<div
-								className={`${styles.switchBox} ${
-									isSwitched ? styles.boxSwitched : ''
-								}`}></div>
+							<div className={styles.switchBoxContainer}>
+								<div
+									className={`${styles.switchBox} ${
+										isSwitched ? styles.boxSwitched : ''
+									}`}></div>
+							</div>
 						</div>
-					</div>
 
-					{/* INPUT NAME */}
-					<Input
-						label={'Name'}
-						type={'text'}
-						inputValue={nameInputValue}
-						onChange={handleNameInputValue}
-						idValue={'name'}
-					/>
-
-					{/* INPUT AMOUNT */}
-					<Input
-						label={'Amount'}
-						type={'number'}
-						inputValue={amountInputValue}
-						onChange={handleAmountInputValue}
-						idValue={'amount'}
-					/>
-
-					{/* INPUT DATE */}
-					<div className={styles.datepickerContainer}>
-						<input
-							className={styles.datepicker}
-							type='date'
-							style={{ marginBottom: '2.5rem' }}
-							id='date'
-							value={dateInputValue}
-							onChange={(e) => handleDateInputValue(e.target.value)}
+						{/* INPUT NAME */}
+						<Input
+							label={'Name'}
+							type={'text'}
+							inputValue={nameInputValue}
+							onChange={handleNameInputValue}
+							idValue={'name'}
 						/>
-						<label className={styles.datepickerLabel} htmlFor='date'>
-							Date
-						</label>
-					</div>
 
-					{/* BUTTON WALLETS */}
-					<DropdownBtn title={'Wallets'} btnType={'categories'} />
-
-					{/* BUTTON CATEGORY */}
-					<div className={styles.inputContainer}>
-						<DropdownBtn title={'Category'} btnType={'categories'} />
-						<AddItemBtn handleOpen={handleAddCategoryModalToggle} />
-					</div>
-
-					<button
-						type='button'
-						aria-label='Wallet'
-						className={styles.dropdownBtn}>
-						<span className={styles.dropdownTitle}>Tag</span>
-					</button>
-
-					<button
-						type='button'
-						aria-label='Wallet'
-						className={styles.dropdownBtn}>
-						<span className={styles.dropdownTitle}>Repeat</span>
-					</button>
-
-					{modalType === 'add' && (
-						<SubmitButton
-							id='addBtn'
-							value='Add transaction'
-							buttonType='add'
-							btnType='submit'
+						{/* INPUT AMOUNT */}
+						<Input
+							label={'Amount'}
+							type={'number'}
+							inputValue={amountInputValue}
+							onChange={handleAmountInputValue}
+							idValue={'amount'}
 						/>
-					)}
 
-					{modalType === 'edit/delete' && (
-						<SubmitButton
-							id='editBtn'
-							value='Edit transaction'
-							buttonType='add'
-							btnType='submit'
-						/>
-					)}
+						{/* INPUT DATE */}
+						<div className={styles.datepickerContainer}>
+							<input
+								className={styles.datepicker}
+								type='date'
+								style={{ marginBottom: '2.5rem' }}
+								id='date'
+								value={dateInputValue}
+								onChange={(e) => handleDateInputValue(e.target.value)}
+							/>
+							<label className={styles.datepickerLabel} htmlFor='date'>
+								Date
+							</label>
+						</div>
 
-					{modalType === 'edit/delete' && (
-						<SubmitButton
-							id='deleteBtn'
-							value='Delete transaction'
-							buttonType='delete'
-							btnType='button'
-							onClick={deleteTransaction}
+						{/* BUTTON WALLETS */}
+						<SelectBtn
+							title={'Wallets'}
+							btnType={'categories'}
+							onClick={handleWalletBottomSheet}
+							selectedItem={selectedWallet}
 						/>
-					)}
-				</form>
+
+						{/* BUTTON CATEGORY */}
+						<div className={styles.inputContainer}>
+							<DropdownBtn title={'Category'} btnType={'categories'} />
+							<AddItemBtn handleOpen={handleAddCategoryModalToggle} />
+						</div>
+
+						<button
+							type='button'
+							aria-label='Wallet'
+							className={styles.dropdownBtn}>
+							<span className={styles.dropdownTitle}>Tag</span>
+						</button>
+
+						<button
+							type='button'
+							aria-label='Wallet'
+							className={styles.dropdownBtn}>
+							<span className={styles.dropdownTitle}>Repeat</span>
+						</button>
+
+						{modalType === 'add' && (
+							<SubmitButton
+								id='addBtn'
+								value='Add transaction'
+								buttonType='add'
+								btnType='submit'
+							/>
+						)}
+
+						{modalType === 'edit/delete' && (
+							<SubmitButton
+								id='editBtn'
+								value='Edit transaction'
+								buttonType='add'
+								btnType='submit'
+							/>
+						)}
+
+						{modalType === 'edit/delete' && (
+							<SubmitButton
+								id='deleteBtn'
+								value='Delete transaction'
+								buttonType='delete'
+								btnType='button'
+								onClick={deleteTransaction}
+							/>
+						)}
+					</form>
+				</div>
 			</div>
-		</div>
+		</>
 	);
 }

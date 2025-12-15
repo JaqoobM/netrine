@@ -1,3 +1,4 @@
+import { use, useEffect } from 'react';
 import styles from './Input.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -8,8 +9,7 @@ export default function Input({
 	ref = null,
 	isActive = false,
 	onOpen = () => {},
-	isError = false,
-	errorText = null,
+	errorText = '',
 	handleFocus = () => {},
 	idValue = '',
 	inputValue = '',

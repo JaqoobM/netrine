@@ -24,10 +24,10 @@ class TransactionControler {
 	async createTransaction(req, res) {
 		const transaction = new Transaction({
 			name: req.body.name,
-			amount: req.body.amount,
+			amount: Number(req.body.amount),
 			date: req.body.date,
-			customId: req.body.customId,
 			type: req.body.type,
+			walletId: req.body.walletId,
 		});
 
 		try {
@@ -70,18 +70,89 @@ class TransactionControler {
 				});
 			});
 
-			const transactions = await Transaction.find({
-				$or: dates,
-			}).sort({ date: -1 });
+			// const transactions = await Transaction.find({
+			// 	$or: dates,
+			// }).sort({ date: -1 });
 
-			return res.status(200).json(transactions);
+			const transactions = await Transaction.aggregate([
+				{
+					$facet: {
+						transactions: [{ $match: { $or: dates } }, { $sort: { date: -1 } }],
+
+						// transactions: [
+						// 	{
+						// 		$project: {
+						// 			name: '$name',
+						// 			walletId: '$walletId',
+						// 			amount: '$amount',
+						// 			type: '$type',
+						// 			year: { $year: '$date' },
+						// 			month: { $month: '$date' },
+						// 			day: { $dayOfMonth: '$date' },
+						// 		},
+						// 	},
+						// ],
+
+						years: [
+							{
+								$group: {
+									_id: { $year: '$date' },
+									total: { $push: '$date' },
+								},
+							},
+						],
+
+						cost: [
+							{ $match: { type: 'cost' } },
+							{ $group: { _id: '$walletId', cost: { $sum: '$amount' } } },
+						],
+
+						income: [
+							{ $match: { type: 'income' } },
+							{ $group: { _id: '$walletId', income: { $sum: '$amount' } } },
+						],
+					},
+				},
+			]);
+
+			const cost = transactions[0].cost;
+			const income = transactions[0].income;
+
+			let walletsBallances = {};
+
+			[...cost, ...income].forEach((obj) => {
+				if (!Object.keys(walletsBallances).includes(obj._id)) {
+					walletsBallances = {
+						...walletsBallances,
+						[obj._id]: {
+							cost: obj.cost,
+							income: obj.income,
+						},
+					};
+				} else {
+					walletsBallances[obj._id].cost = obj.cost
+						? obj.cost
+						: walletsBallances[obj._id].cost;
+					walletsBallances[obj._id].income = obj.income
+						? obj.income
+						: walletsBallances[obj._id].income;
+				}
+			});
+
+			const response = {
+				years: transactions[0].years.map((year) => year._id),
+				transactions: transactions[0].transactions,
+				walletsBallances,
+			};
+
+			return res.status(200).json(response);
 		} catch (error) {
-			console.log('error:');
+			console.log(error);
 		}
 	}
 
 	async editTransaction(req, res) {
-		const id = req.body._id || req.body.customId;
+		const id = req.body._id;
 
 		const transaction = await Transaction.findOne(
 			req.body._id ? { _id: id } : { customId: id }
@@ -90,6 +161,7 @@ class TransactionControler {
 		transaction.name = req.body.name;
 		transaction.amount = req.body.amount;
 		transaction.date = req.body.date;
+		transaction.walletId = req.body.walletId;
 
 		try {
 			await transaction.save();
@@ -106,7 +178,7 @@ class TransactionControler {
 			const response = await Transaction.deleteOne({ _id: id });
 
 			if (response.deletedCount === 1) {
-				res.sendStatus(201);
+				res.sendStatus(200);
 			} else {
 				res.status(404).json({ message: 'Transaction not found' });
 			}

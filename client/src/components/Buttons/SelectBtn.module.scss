@@ -1,0 +1,47 @@
+.btn {
+	position: relative;
+	display: flex;
+	align-items: center;
+	padding: 0 1rem 0;
+	width: 100%;
+	margin-bottom: 2.2rem;
+	height: 4rem;
+	border: 0.1rem solid #b8b8b8;
+	border-radius: 0.8rem;
+	transition: border 0.2s, border-bottom-left-radius 0.2s,
+		border-bottom-right-radius 0.2s;
+}
+
+.title {
+	font-size: 1.4rem;
+	color: #b8b8b8;
+	position: absolute;
+	top: -1.1rem;
+	left: 1.1rem;
+	background-color: #fff;
+	padding: 0 0.3rem 0;
+	transition: color 0.2s;
+}
+
+.openTitle {
+	color: #219ebc;
+}
+
+.chevron {
+	font-size: 1.4rem;
+	color: #b8b8b8;
+	transition: color 0.2s, transform 0.2s;
+	margin-left: auto;
+	margin-left: 1rem;
+}
+
+.openChevron {
+	color: #219ebc;
+	transform: rotate(-180deg);
+}
+
+.textBox {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
