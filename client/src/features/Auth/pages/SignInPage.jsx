@@ -41,7 +41,7 @@ export default function SignInPage() {
 
 			navigate('/transactions');
 		} catch (error) {
-			console.log('error');
+			console.log('error:', error);
 		}
 	};
 
