@@ -1,4 +1,4 @@
-import styles from './wallets.module.scss';
+import styles from './Wallets.module.scss';
 import AddWallet from '../components/AddWalletModal';
 import React, { useState, use } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
