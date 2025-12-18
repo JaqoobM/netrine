@@ -15,7 +15,7 @@ export default function Password(props) {
 
 	const handleValueChange = (value) => {
 		setPasswordValue(value);
-		props.setPasswordValue(value);
+		props.setPassword(value);
 	};
 
 	const validatePassword = useCallback(() => {

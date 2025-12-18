@@ -24,6 +24,10 @@ router.route('/api/wallets/:id').delete(walletController.deleteWallet);
 
 router.get('/api/years', transactionControler.getYears);
 
-router.route('api/user/create', userController.createUser);
+router.route('/api/user/').post(userController.createUser);
+
+router.route('/api/auth/login').post(userController.compareUser);
+
+router.route('/api/transactions/me').get(transactionControler.confirmUser);
 
 export default router;

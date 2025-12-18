@@ -5,8 +5,11 @@ import Password from '../../../components/Password/Password';
 import RepeatPassword from '../../../components/RepeatPassword/RepeatPassword';
 import { useState } from 'react';
 import axios from 'axios';
+import { faCircleRight } from '@fortawesome/free-solid-svg-icons';
 
 export default function RegisterPage() {
+	const baseURL = import.meta.env.VITE_API_URL;
+
 	const [isSubmit, setIsSubmit] = useState(false);
 
 	const [email, setEmail] = useState('');
@@ -25,27 +28,32 @@ export default function RegisterPage() {
 		isPasswordLength: false,
 	});
 
-	const createUserData = async (user) => {};
+	const createUserData = async (user) => {
+		const response = await axios.post(
+			`${baseURL || 'http://localhost:3000'}/api/user/`,
+			user
+		);
 
-	const sendData = () => {
-		if (email && password && repeatPassword) {
-			console.log('Wysłano formularz');
-		} else {
-			console.log('Nie wysłano formularza');
-		}
+		console.log(response.data);
 	};
-
+	
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
 		setIsSubmit(true);
 
-		if (email && password && repeatPassword) {
-			sendData();
-			console.log('Wysłano');
-		} else {
-			console.log('Nie wysłano');
-		}
+		createUserData({
+			email,
+			password,
+		});
+
+		// if (email && password && repeatPassword) {
+		// 	console.log(email, password, repeatPassword);
+		// 	console.log('Wysłano');
+		// } else {
+		// 	console.log(email, password, repeatPassword);
+		// 	console.log('Nie wysłano');
+		// }
 	};
 
 	return (

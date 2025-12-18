@@ -1,5 +1,6 @@
 import Transaction from '../db/models/transaction.js';
 import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
 
 class TransactionControler {
 	async getYears(req, res) {
@@ -42,6 +43,8 @@ class TransactionControler {
 	async showTransactions(req, res) {
 		try {
 			const { month, year } = req.query || {};
+
+			// const test = jwt.verify(req.cookies.token, process.env.JWT_ACCESS_SECRET);
 
 			let years = [];
 			let months = [];
@@ -185,6 +188,16 @@ class TransactionControler {
 		} catch (e) {
 			res.sendStatus(500);
 			console.log(e, 'Nie usunięto transakcji');
+		}
+	}
+
+	async confirmUser(req, res) {
+		try {
+			const test = jwt.verify(req.cookies.token, process.env.JWT_ACCESS_SECRET);
+			res.sendStatus(200);
+		} catch (error) {
+			console.log('tak');
+			res.sendStatus(403);
 		}
 	}
 }

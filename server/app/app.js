@@ -7,14 +7,20 @@ import cors from 'cors';
 import connectDB from './db/mongoose.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
-
+import cookieParser from 'cookie-parser';
 
 const filePath = fileURLToPath(import.meta.url);
-const folderPath = path.dirname(filePath)
+const folderPath = path.dirname(filePath);
 
 connectDB();
-app.use(cors());
-app.use(express.json())
+app.use(
+	cors({
+		origin: 'http://localhost:5173',
+		credentials: true,
+	})
+);
+app.use(express.json());
+app.use(cookieParser());
 app.use('/', routers);
 
 app.use(express.static(path.join(folderPath, '../../client/build')));

@@ -15,6 +15,7 @@ export default function RepeatPassword(props) {
 
 	const handleValueChange = (value) => {
 		setRepeatPasswordValue(value);
+
 	};
 
 	const validateRepeatPassword = useCallback(() => {
@@ -31,7 +32,7 @@ export default function RepeatPassword(props) {
 		setError(errorText);
 
 		setIsRepeatPasswordCorrect(
-			!errorText && !isRepeatPasswordFocused && props.passwordValues
+			!errorText && !isRepeatPasswordFocused && props.passwordValue
 		);
 
 		if (!errorText && props.isSubmit) {

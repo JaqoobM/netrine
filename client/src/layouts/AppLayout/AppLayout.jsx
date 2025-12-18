@@ -106,7 +106,8 @@ export default function Applayout() {
 			const response = await axios.get(
 				`${
 					baseURL || 'http://localhost:3000'
-				}/api/transactions?year=${selectedYears}&month=${selectedMonths}`
+				}/api/transactions?year=${selectedYears}&month=${selectedMonths}`,
+				{ withCredentials: true }
 			);
 			return response.data;
 		} catch (error) {
