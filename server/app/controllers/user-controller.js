@@ -41,7 +41,7 @@ class UserContrller {
 
 					.status(200)
 					.cookie('token', token, {
-						sameSite: 'Strict',
+						// sameSite: 'Strict',
 						path: '/',
 						maxAge: 900000,
 						secure: true,
