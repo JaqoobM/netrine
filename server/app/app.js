@@ -13,9 +13,11 @@ const filePath = fileURLToPath(import.meta.url);
 const folderPath = path.dirname(filePath);
 
 connectDB();
+
+const origins = ['http://localhost:5173', '74.220.51.0/24', '74.220.59.0/24'];
 app.use(
 	cors({
-		origin: 'http://localhost:5173',
+		origin: origins,
 		credentials: true,
 	})
 );
