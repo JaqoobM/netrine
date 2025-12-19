@@ -11,10 +11,10 @@ export default function App() {
 		<Routes>
 			<Route element={<AppLayout />}>
 				<Route path='transactions' element={<Transactions />} />
-				<Route path='signup' element={<SignUpPage />} />
-				<Route path='signin' element={<SignInPage />} />
 				<Route path='wallets' element={<Wallets />} />
 			</Route>
+			<Route path='signup' element={<SignUpPage />} />
+			<Route path='signin' element={<SignInPage />} />
 		</Routes>
 	);
 }

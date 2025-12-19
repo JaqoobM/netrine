@@ -18,6 +18,7 @@ export default function Email(props) {
 
 	const handleValueChange = (value) => {
 		setEmailValue(value);
+		props.setEmail(value);
 	};
 
 	const validateEmail = useCallback(() => {

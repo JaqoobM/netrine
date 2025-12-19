@@ -8,7 +8,6 @@ import axios from 'axios';
 import { TransactionsContext } from '../../../layouts/AppLayout/AppLayout.jsx';
 import Filters from '../components/Filters.jsx';
 import { faKitchenSet } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router';
 
 function Transactions() {
 	const settingsBoxRef = useRef(null);
@@ -18,26 +17,7 @@ function Transactions() {
 	// const [allYears, setAllYears] = useState([]);
 	const transactionsContext = use(TransactionsContext);
 
-	const [confirm, setConfirm] = useState(false);
-
 	const baseURL = import.meta.env.VITE_API_URL;
-
-	const navigate = useNavigate();
-
-	useEffect(() => {
-		const test = async () => {
-			try {
-				const response = await axios.get(
-					`${baseURL || 'http://localhost:3000'}/api/transactions/me`,
-					{ withCredentials: true }
-				);
-				setConfirm(true);
-			} catch (error) {
-				navigate('/signin');
-			}
-		};
-		test();
-	}, []);
 
 	// useEffect(() => {
 	// 	const getYearsFromApi = async () => {
@@ -112,41 +92,39 @@ function Transactions() {
 		allBalanceCalculation();
 	}, [transactionsContext.filteredList]);
 
-	if (confirm) {
-		return (
-			<>
-				{/* <Navigation /> */}
+	return (
+		<>
+			{/* <Navigation /> */}
 
-				{categoryModalIsOpen && (
-					<CategoryModal
-						categoryModalHandler={categoryModalHandler}
-						categoryModalIsOpen={categoryModalIsOpen}
-						categoryList={categoryList}
-					/>
-				)}
-
-				{/* TOP BAR */}
-				<TopBar openFilters={handleToggleFilters} balance={balance} />
-
-				<Filters
-					openFilters={handleToggleFilters}
-					isOpen={isFiltersOpen}
-					// fetchTransactions={fetchTransactions}
-					// allYears={allYears}
-					// getYearsFromApi={getYearsFromApi}
+			{categoryModalIsOpen && (
+				<CategoryModal
+					categoryModalHandler={categoryModalHandler}
+					categoryModalIsOpen={categoryModalIsOpen}
+					categoryList={categoryList}
 				/>
+			)}
 
-				{/* TRANSACTIONS */}
-				<TransactionsList
-					// editTransactionHandler={editTransactionHandler}
-					transactionsList={transactions}
-					modalHandler={modalHandler}
-				/>
+			{/* TOP BAR */}
+			<TopBar openFilters={handleToggleFilters} balance={balance} />
 
-				<div className='page-bg'></div>
-			</>
-		);
-	}
+			<Filters
+				openFilters={handleToggleFilters}
+				isOpen={isFiltersOpen}
+				// fetchTransactions={fetchTransactions}
+				// allYears={allYears}
+				// getYearsFromApi={getYearsFromApi}
+			/>
+
+			{/* TRANSACTIONS */}
+			<TransactionsList
+				// editTransactionHandler={editTransactionHandler}
+				transactionsList={transactions}
+				modalHandler={modalHandler}
+			/>
+
+			<div className='page-bg'></div>
+		</>
+	);
 }
 
 export default Transactions;

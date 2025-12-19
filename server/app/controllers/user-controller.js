@@ -25,8 +25,7 @@ class UserContrller {
 
 			const user = await User.findOne({ email });
 
-			const isCorrect = await bcrypt.compare(password, user.password);
-
+			const isCorrect = await bcrypt.compare(password, user?.password);
 			if (isCorrect) {
 				const token = jwt.sign(
 					{

@@ -12,6 +12,7 @@ import {
 } from 'react';
 import { faVolumeHigh } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import { useNavigate } from 'react-router';
 
 export const ToggleModalContext = createContext(null);
 export const TransactionsContext = createContext(null);
@@ -40,6 +41,8 @@ export default function Applayout() {
 
 	const [wallets, setWallets] = useState([]);
 	const [walletBalance, setWalletBalance] = useState({});
+
+	const [confirm, setConfirm] = useState(false);
 
 	const handleShowToast = (type = 'success', text = 'Success!') => {
 		setIsSuccessToastActive(true);
@@ -354,56 +357,75 @@ export default function Applayout() {
 		setWallets(newWallets);
 	};
 
-	return (
-		<>
-			<Toast
-				isActive={isSuccessToastActive}
-				text={succesToastText}
-				toastType={toastType}
-			/>
-			<ToastContext
-				value={{
-					showSuccessToast: handleShowToast,
-				}}>
-				<ToggleModalContext value={handleToggleModal}>
-					<TransactionsContext
-						value={{
-							addNewTransaction,
-							list: transactions,
-							transactionsUpdate,
-							filteredList: filteredTransactions,
-							filteredTransactionsUpdate,
-							changePeriod,
-							allYears,
-						}}>
-						<WalletContext
-							value={{
-								create: createWalletData,
-								add: addWallets,
-								editData: editWalletData,
-								edit: editWallets,
-								delData: deleteWalletData,
-								del: deleteWallet,
-								wallets,
-								walletBalance,
-							}}>
-							<TransactionModal
-								isModalOpen={isModalOpen}
-								transactionId={transactionId}
-								modalType={modalType}
-								createTransaction={createTransaction}
-								editTransaction={editTransaction}
-								deleteTransactionData={deleteTransactionData}
-							/>
+	const navigate = useNavigate();
 
-							<main>
-								<Outlet />
-							</main>
-							<NavMobile toggleModal={handleToggleModal} />
-						</WalletContext>
-					</TransactionsContext>
-				</ToggleModalContext>
-			</ToastContext>
-		</>
-	);
+	useEffect(() => {
+		const test = async () => {
+			try {
+				const response = await axios.get(
+					`${baseURL || 'http://localhost:3000'}/api/transactions/me`,
+					{ withCredentials: true }
+				);
+				setConfirm(true);
+			} catch (error) {
+				navigate('/signin');
+			}
+		};
+		test();
+	}, []);
+
+	if (confirm) {
+		return (
+			<>
+				<Toast
+					isActive={isSuccessToastActive}
+					text={succesToastText}
+					toastType={toastType}
+				/>
+				<ToastContext
+					value={{
+						showSuccessToast: handleShowToast,
+					}}>
+					<ToggleModalContext value={handleToggleModal}>
+						<TransactionsContext
+							value={{
+								addNewTransaction,
+								list: transactions,
+								transactionsUpdate,
+								filteredList: filteredTransactions,
+								filteredTransactionsUpdate,
+								changePeriod,
+								allYears,
+							}}>
+							<WalletContext
+								value={{
+									create: createWalletData,
+									add: addWallets,
+									editData: editWalletData,
+									edit: editWallets,
+									delData: deleteWalletData,
+									del: deleteWallet,
+									wallets,
+									walletBalance,
+								}}>
+								<TransactionModal
+									isModalOpen={isModalOpen}
+									transactionId={transactionId}
+									modalType={modalType}
+									createTransaction={createTransaction}
+									editTransaction={editTransaction}
+									deleteTransactionData={deleteTransactionData}
+								/>
+
+								<main>
+									<Outlet />
+								</main>
+								<NavMobile toggleModal={handleToggleModal} />
+							</WalletContext>
+						</TransactionsContext>
+					</ToggleModalContext>
+				</ToastContext>
+			</>
+		);
+	}
 }
