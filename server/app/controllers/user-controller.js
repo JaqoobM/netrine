@@ -18,7 +18,7 @@ class UserContrller {
 		await user.save();
 		res.status(201).json(user);
 	}
-	// klucz an backend!!!!!
+
 	async compareUser(req, res) {
 		try {
 			const { email, password } = req.body;
@@ -41,7 +41,7 @@ class UserContrller {
 
 					.status(200)
 					.cookie('token', token, {
-						// sameSite: 'Strict',
+						sameSite: 'None',
 						path: '/',
 						maxAge: 900000,
 						secure: true,

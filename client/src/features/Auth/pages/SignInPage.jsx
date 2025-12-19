@@ -44,7 +44,7 @@ export default function SignInPage() {
 			console.log('error:', error);
 		}
 	};
-
+	
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
