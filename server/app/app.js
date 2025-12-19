@@ -25,10 +25,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use('/', routers);
 
-app.use(express.static(path.join(folderPath, '../../client/build')));
+// app.use(express.static(path.join(folderPath, '../../client/build')));
 
-app.get('*', function (req, res) {
-	res.sendFile(path.join(folderPath, '../../client/build', 'index.html'));
-});
+// app.get('*', function (req, res) {
+// 	res.sendFile(path.join(folderPath, '../../client/build', 'index.html'));
+// });
 
 export default app;

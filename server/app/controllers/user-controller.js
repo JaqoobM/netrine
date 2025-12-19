@@ -18,7 +18,7 @@ class UserContrller {
 		await user.save();
 		res.status(201).json(user);
 	}
-
+	// klucz an backend!!!!!
 	async compareUser(req, res) {
 		try {
 			const { email, password } = req.body;
