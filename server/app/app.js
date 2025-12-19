@@ -16,9 +16,7 @@ connectDB();
 
 const origins = [
 	'http://localhost:5173',
-	'74.220.51.0/24',
-	'74.220.59.0/24',
-	'https://netrineserver.onrender.com',
+	'https://netrine.vercel.app/',
 ];
 
 app.use(
