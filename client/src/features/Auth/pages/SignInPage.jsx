@@ -81,7 +81,7 @@ export default function SignInPage() {
 					<button className={styles.submitBtn}>Sign Up</button>
 				</form>
 				<p className={styles.info}>
-					Already have an account?
+					Already have an account1?
 					<a className={styles.link} href='/signin'>
 						Sign In
 					</a>
