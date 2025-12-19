@@ -17,6 +17,9 @@ const transactionSchema = new Schema({
 	walletId: {
 		type: String,
 	},
+	userId: {
+		type: String,
+	},
 });
 
 const Transaction = mongoose.model('Transaction', transactionSchema);

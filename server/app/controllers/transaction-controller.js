@@ -29,6 +29,7 @@ class TransactionControler {
 			date: req.body.date,
 			type: req.body.type,
 			walletId: req.body.walletId,
+			userId: req.userId,
 		});
 
 		try {
@@ -43,8 +44,6 @@ class TransactionControler {
 	async showTransactions(req, res) {
 		try {
 			const { month, year } = req.query || {};
-
-			// const test = jwt.verify(req.cookies.token, process.env.JWT_ACCESS_SECRET);
 
 			let years = [];
 			let months = [];
@@ -76,11 +75,15 @@ class TransactionControler {
 			// const transactions = await Transaction.find({
 			// 	$or: dates,
 			// }).sort({ date: -1 });
-
+			// console.log(req.userId);
 			const transactions = await Transaction.aggregate([
 				{
 					$facet: {
-						transactions: [{ $match: { $or: dates } }, { $sort: { date: -1 } }],
+						transactions: [
+							{ $match: { userId: req.userId, $or: dates } },
+							// { $match: { $or: dates } },
+							{ $sort: { date: -1 } },
+						],
 
 						// transactions: [
 						// 	{
@@ -97,6 +100,7 @@ class TransactionControler {
 						// ],
 
 						years: [
+							{ $match: { userId: req.userId } },
 							{
 								$group: {
 									_id: { $year: '$date' },
@@ -106,12 +110,12 @@ class TransactionControler {
 						],
 
 						cost: [
-							{ $match: { type: 'cost' } },
+							{ $match: { userId: req.userId, type: 'cost' } },
 							{ $group: { _id: '$walletId', cost: { $sum: '$amount' } } },
 						],
 
 						income: [
-							{ $match: { type: 'income' } },
+							{ $match: { userId: req.userId, type: 'income' } },
 							{ $group: { _id: '$walletId', income: { $sum: '$amount' } } },
 						],
 					},
@@ -157,9 +161,7 @@ class TransactionControler {
 	async editTransaction(req, res) {
 		const id = req.body._id;
 
-		const transaction = await Transaction.findOne(
-			req.body._id ? { _id: id } : { customId: id }
-		);
+		const transaction = await Transaction.findOne({ _id: id });
 
 		transaction.name = req.body.name;
 		transaction.amount = req.body.amount;
@@ -193,7 +195,10 @@ class TransactionControler {
 
 	async confirmUser(req, res) {
 		try {
-			const test = jwt.verify(req.cookies.token, process.env.JWT_ACCESS_SECRET);
+			const decoded = jwt.verify(
+				req.cookies.token,
+				process.env.JWT_ACCESS_SECRET
+			);
 			res.sendStatus(200);
 		} catch (error) {
 			console.log(req.cookies.token, process.env.JWT_ACCESS_SECRET);

@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const WalletSchema = new Schema({
 	name: { type: String },
 	balance: { type: Number },
+	userId: { type: String },
 });
 
 const Wallet = mongoose.model('Wallet', WalletSchema);

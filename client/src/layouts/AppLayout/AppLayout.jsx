@@ -138,7 +138,8 @@ export default function Applayout() {
 		try {
 			const response = await axios.post(
 				`${baseURL || 'http://localhost:3000'}/api/transactions`,
-				newTransaction
+				newTransaction,
+				{ withCredentials: true }
 			);
 			if (response.status === 201) {
 				return response.data;
@@ -196,7 +197,8 @@ export default function Applayout() {
 		try {
 			const response = await axios.put(
 				`${baseURL || 'http://localhost:3000'}/api/transactions`,
-				editedTransaction
+				editedTransaction,
+				{ withCredentials: true }
 			);
 
 			if (response.status === 200) {
@@ -280,7 +282,8 @@ export default function Applayout() {
 	const fetchWalletsData = async () => {
 		try {
 			const response = await axios.get(
-				`${baseURL || 'http://localhost:3000'}/api/wallets`
+				`${baseURL || 'http://localhost:3000'}/api/wallets`,
+				{ withCredentials: true }
 			);
 
 			if (response.status === 200) {
@@ -293,7 +296,8 @@ export default function Applayout() {
 		try {
 			const response = await axios.post(
 				`${baseURL || 'http://localhost:3000'}/api/wallets`,
-				newWallet
+				newWallet,
+				{ withCredentials: true }
 			);
 
 			if (response.status === 201) {
@@ -308,7 +312,8 @@ export default function Applayout() {
 		try {
 			const response = await axios.put(
 				`${baseURL || 'http://localhost:3000'}/api/wallets`,
-				editedWallet
+				editedWallet,
+				{ withCredentials: true }
 			);
 
 			if (response.status === 200) {

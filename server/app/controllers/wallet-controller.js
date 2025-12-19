@@ -4,8 +4,8 @@ import Wallet from '../db/models/wallet.js';
 class WalletController {
 	async showWallets(req, res) {
 		try {
-			const wallets = await Wallet.find({});
-
+			const wallets = await Wallet.find({ userId: req.userId });
+			console.log(wallets);
 			res.status(200).json(wallets);
 		} catch (error) {
 			res.sendStatus(500);
@@ -17,6 +17,7 @@ class WalletController {
 			const wallet = new Wallet({
 				name: req.body.name,
 				balance: req.body.balance,
+				userId: req.userId,
 			});
 
 			await wallet.save();
@@ -45,7 +46,6 @@ class WalletController {
 	}
 
 	async deleteWallet(req, res) {
-		
 		try {
 			const { id } = req.params;
 
