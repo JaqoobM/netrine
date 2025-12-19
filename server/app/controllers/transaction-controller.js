@@ -196,7 +196,7 @@ class TransactionControler {
 			const test = jwt.verify(req.cookies.token, process.env.JWT_ACCESS_SECRET);
 			res.sendStatus(200);
 		} catch (error) {
-			console.log('tak');
+			console.log(req.cookies.token, process.env.JWT_ACCESS_SECRET);
 			res.sendStatus(403);
 		}
 	}
