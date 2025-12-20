@@ -72,32 +72,13 @@ class TransactionControler {
 				});
 			});
 
-			// const transactions = await Transaction.find({
-			// 	$or: dates,
-			// }).sort({ date: -1 });
-			// console.log(req.userId);
 			const transactions = await Transaction.aggregate([
 				{
 					$facet: {
 						transactions: [
 							{ $match: { userId: req.userId, $or: dates } },
-							// { $match: { $or: dates } },
 							{ $sort: { date: -1 } },
 						],
-
-						// transactions: [
-						// 	{
-						// 		$project: {
-						// 			name: '$name',
-						// 			walletId: '$walletId',
-						// 			amount: '$amount',
-						// 			type: '$type',
-						// 			year: { $year: '$date' },
-						// 			month: { $month: '$date' },
-						// 			day: { $dayOfMonth: '$date' },
-						// 		},
-						// 	},
-						// ],
 
 						years: [
 							{ $match: { userId: req.userId } },
@@ -159,18 +140,28 @@ class TransactionControler {
 	}
 
 	async editTransaction(req, res) {
-		const id = req.body._id;
-
-		const transaction = await Transaction.findOne({ _id: id });
-
-		transaction.name = req.body.name;
-		transaction.amount = req.body.amount;
-		transaction.date = req.body.date;
-		transaction.walletId = req.body.walletId;
-
 		try {
-			await transaction.save();
-			res.status(200).json(transaction);
+			const id = req.body._id;
+			const response = await Transaction.updateOne(
+				{
+					_id: id,
+					userId: req.userId,
+				},
+				{
+					$set: {
+						name: req.body.name,
+						amount: req.body.amount,
+						date: req.body.date,
+						walletId: req.body.wal,
+					},
+				}
+			);
+
+			if (response.modifiedCount) {
+				res.status(200).json(response.modifiedCount);
+			} else {
+				res.sendStatus(400);
+			}
 		} catch (e) {
 			res.sendStatus(500);
 			console.log('Nie zapisano edycji');

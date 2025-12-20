@@ -4,6 +4,7 @@ import transactionControler from '../controllers/transaction-controller.js';
 import walletController from '../controllers/wallet-controller.js';
 import userController from '../controllers/user-controller.js';
 import authMiddleware from '../middleware/authMiddleware.js';
+import authController from '../controllers/authController.js';
 
 router
 	.route('/api/transactions')
@@ -25,11 +26,8 @@ router
 	.route('/api/wallets/:id')
 	.delete(authMiddleware, walletController.deleteWallet);
 
-router.get('/api/years', transactionControler.getYears);
-
-router.route('/api/user/').post(userController.createUser);
-
-router.route('/api/auth/login').post(userController.compareUser);
+router.route('/api/auth/register').post(authController.register);
+router.route('/api/auth/login').post(authController.login);
 
 router.route('/api/transactions/me').get(transactionControler.confirmUser);
 

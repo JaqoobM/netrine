@@ -7,9 +7,9 @@ export default function authMiddleware(req, res, next) {
 			process.env.JWT_ACCESS_SECRET
 		);
 
-		req.userId = decoded.data.id;
+		req.userId = decoded.id;
 		next();
 	} catch (error) {
-		console.log(error);
+		res.status(401).json({ message: 'Sesion expired' });
 	}
 }
